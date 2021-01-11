@@ -45,7 +45,7 @@ public class RandomRoomsRepository implements RandomRoomsDataSource {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Map<String, Integer> users = (Map<String, Integer>) documentSnapshot.get("users");
                 users.put(uid, 0);
-                documentSnapshot.getReference().set(users);
+                documentSnapshot.getReference().update("users", users);
                 callBack.onSearchFinished(documentSnapshot.getId());
             }
         });

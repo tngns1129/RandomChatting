@@ -8,45 +8,47 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
         app:layout_constraintBottom_toTopOf="@id/chat_layout_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <LinearLayout
         android:id="@+id/chat_layout_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/chat_recycler_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_recycler_view">
 
         <Button
             android:id="@+id/chat_btn_rematch"
             android:layout_width="40dp"
             android:layout_height="match_parent"
-            android:text="R"/>
+            android:text="R" />
 
         <Button
             android:id="@+id/chat_btn_file_send"
             android:layout_width="40dp"
             android:layout_height="match_parent"
-            android:text="F"/>
+            android:text="F" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/chat_edit_text_msg"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/chat_btn_send"
             android:layout_width="45dp"
             android:layout_height="match_parent"
-            android:text="S"/>
+            android:text="S" />
 
     </LinearLayout>
 
