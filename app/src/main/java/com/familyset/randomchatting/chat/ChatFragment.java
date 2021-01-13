@@ -1,19 +1,13 @@
 package com.familyset.randomchatting.chat;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,10 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
-import com.familyset.randomchatting.data.message.MessagesRepository;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ChatFragment extends Fragment implements ChatContract.View {
 
@@ -39,8 +34,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     private Button rematchBtn;
     private Button fileSendBtn;
 
-    private MessagesAdapter mAdapter;
-    private MessagesAdapter.MessageItemListener mItemListener;
+    private ChatAdapter mAdapter;
 
     String uid = "asdfs";
 
@@ -48,7 +42,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new MessagesAdapter(new ArrayList<Message>(0), mItemListener);
+        mAdapter = new ChatAdapter(new ArrayList<Message>(0), mItemListener);
     }
 
     @Nullable
@@ -92,39 +86,54 @@ public class ChatFragment extends Fragment implements ChatContract.View {
 
     @Override
     public void showMessages(List<Message> messages) {
-        mAdapter.replaceData(messages);
+        mAdapter.replaceMessagesData(messages);
     }
+
+    @Override
+    public void showUserThumbnails(Map<String, UserThumbnail> users) { mAdapter.replaceUsersData(users);}
 
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
-    private static class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private List<Message> mMessages;
-        private MessageItemListener mItemListener;
+    ChatAdapter.ChatItemListener mItemListener = new ChatAdapter.ChatItemListener() {
 
-        public MessagesAdapter(List<Message> messages, MessageItemListener itemListener) {
-            setList(messages);
+    };
+
+    private static class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private Map<String, UserThumbnail> mUserThumbnails;
+        private List<Message> mMessages;
+        private ChatItemListener mItemListener;
+
+        public ChatAdapter(List<Message> messages, ChatItemListener itemListener) {
+            setMessagesList(messages);
             mItemListener = itemListener;
         }
 
-        public void replaceData(List<Message> messages) {
-            setList(messages);
+        public void replaceUsersData(Map<String, UserThumbnail> users) {
+            setUsersMap(users);
             notifyDataSetChanged();
         }
 
-        private void setList(List<Message> messages) {
+        public void replaceMessagesData(List<Message> messages) {
+            setMessagesList(messages);
+            notifyDataSetChanged();
+        }
+
+        private void setMessagesList(List<Message> messages) {
             mMessages = messages;
         }
 
-        private static class MessageViewHolder extends RecyclerView.ViewHolder {
+        private void setUsersMap(Map<String, UserThumbnail> userThumbnails) { mUserThumbnails = userThumbnails; }
+
+        private static class ChatViewHolder extends RecyclerView.ViewHolder {
             ImageView userPhotoView;
             TextView nameView;
             TextView msgView;
             TextView readCounterView;
             TextView timestampView;
 
-            public MessageViewHolder(@NonNull View itemView) {
+            public ChatViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 userPhotoView = itemView.findViewById(R.id.chat_msg_image_view_user_photo);
@@ -149,18 +158,19 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-            return new MessageViewHolder(view);
+            return new ChatViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            final MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
+            final ChatViewHolder chatViewHolder = (ChatViewHolder) holder;
             final Message message = mMessages.get(position);
 
-            if (messageViewHolder.nameView != null) {
-                messageViewHolder.nameView.setText(message.getUid());
+            if (chatViewHolder.nameView != null) {
+                // TODO map이 null일 때
+                chatViewHolder.nameView.setText(mUserThumbnails.get(message.getUid()).getNickname());
             }
-            messageViewHolder.msgView.setText(message.getMsg());
+            chatViewHolder.msgView.setText(message.getMsg());
         }
 
         @Override
@@ -179,7 +189,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
             return mMessages.size();
         }
 
-        public interface MessageItemListener {
+        public interface ChatItemListener {
 
         }
     }

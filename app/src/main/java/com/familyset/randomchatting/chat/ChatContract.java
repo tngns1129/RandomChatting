@@ -1,9 +1,10 @@
 package com.familyset.randomchatting.chat;
 
 import com.familyset.randomchatting.data.message.Message;
-import com.familyset.randomchatting.data.message.MessagesDataSource;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ChatContract {
     interface View {
@@ -12,6 +13,7 @@ public interface ChatContract {
         boolean isActive();
 
         void showMessages(List<Message> messages);
+        void showUserThumbnails(Map<String, UserThumbnail> users);
     }
 
     interface Presenter {
@@ -19,5 +21,6 @@ public interface ChatContract {
         void startListening();
         void stopListening();
         void loadMessages();
+        void loadUsers();
     }
 }

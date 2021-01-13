@@ -9,6 +9,8 @@ import com.familyset.randomchatting.chat.ChatFragment;
 import com.familyset.randomchatting.chat.ChatPresenter;
 import com.familyset.randomchatting.data.message.MessagesRepository;
 import com.familyset.randomchatting.data.message.remote.MessagesRemoteDataSource;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
+import com.familyset.randomchatting.data.userThumbnail.remote.UserThumbnailsRemoteDataSource;
 import com.familyset.randomchatting.matching.MatchingFragment;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -46,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showChatFragment(String rid) {
-        mChatPresenter = new ChatPresenter(chatFragment, MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", "devRoom")));
+        mChatPresenter = new ChatPresenter(chatFragment,
+                UserThumbnailsRepository.getInstance(UserThumbnailsRemoteDataSource.getInstance("randomRooms", "devRoom")),
+                MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", "devRoom")));
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout, chatFragment).commit();
     }
 }

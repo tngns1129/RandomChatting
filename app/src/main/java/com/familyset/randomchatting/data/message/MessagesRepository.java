@@ -31,8 +31,8 @@ public class MessagesRepository implements MessagesDataSource {
     public void getMessage(String id, GetMessagesCallBack callBack) {
         mMessagesRemoteDataSource.getMessage(id, new GetMessagesCallBack() {
             @Override
-            public void onMessagesLoaded(Message message) {
-                callBack.onMessagesLoaded(message);
+            public void onMessageLoaded(Message message) {
+                callBack.onMessageLoaded(message);
             }
         });
     }

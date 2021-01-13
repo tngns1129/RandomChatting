@@ -1,25 +1,31 @@
 package com.familyset.randomchatting.chat;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesDataSource;
 import com.familyset.randomchatting.data.message.MessagesRepository;
-import com.google.firebase.Timestamp;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsDataSource;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatPresenter implements ChatContract.Presenter {
     private ChatContract.View mView;
+    private UserThumbnailsRepository mUserThumbnailsRepository;
     private MessagesRepository mMessagesRepository;
     private boolean mFirstLoad = true;
 
-    public ChatPresenter(@NonNull ChatContract.View view, @NonNull MessagesRepository messagesRepository) {
+    public ChatPresenter(@NonNull ChatContract.View view, @NonNull UserThumbnailsRepository userThumbnailsRepository, @NonNull MessagesRepository messagesRepository) {
         mView = view;
+        mUserThumbnailsRepository = userThumbnailsRepository;
         mMessagesRepository = messagesRepository;
-
         mView.setPresenter(this);
     }
 
@@ -30,6 +36,8 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void startListening() {
+        loadUsers();
+
         loadMessages();
     }
 
@@ -65,6 +73,40 @@ public class ChatPresenter implements ChatContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void loadUsers() {
+        mUserThumbnailsRepository.getUserThumbnails(new UserThumbnailsDataSource.LoadUserThumbnailsCallBack() {
+            @Override
+            public void onUserThumbnailsLoaded(List<UserThumbnail> userThumbnails) {
+                Map<String, UserThumbnail> userThumbnailsToShow = new HashMap<String, UserThumbnail>();
+
+                for (UserThumbnail userThumbnail : userThumbnails) {
+                    userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
+                    Log.d("CHEKC", userThumbnail.getNickname());
+                }
+
+                if (!mView.isActive()) {
+                    return;
+                }
+
+                processUserThumbnails(userThumbnailsToShow);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+    }
+
+    private void processUserThumbnails(Map<String, UserThumbnail> userThumbnails) {
+        if (userThumbnails.isEmpty()) {
+
+        } else {
+            mView.showUserThumbnails(userThumbnails);
+        }
     }
 
     private void processMessages(List<Message> messages) {
