@@ -58,7 +58,7 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Message message = documentSnapshot.toObject(Message.class);
-                callBack.onMessagesLoaded(message);
+                callBack.onMessageLoaded(message);
             }
         });
     }

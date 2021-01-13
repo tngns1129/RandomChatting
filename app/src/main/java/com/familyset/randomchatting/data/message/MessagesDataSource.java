@@ -11,7 +11,7 @@ public interface MessagesDataSource {
     }
 
     interface GetMessagesCallBack {
-        void onMessagesLoaded(Message message);
+        void onMessageLoaded(Message message);
     }
 
     void getMessages(LoadMessagesCallBack callBack);
