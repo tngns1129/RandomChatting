@@ -9,9 +9,10 @@ public interface UserThumbnailsDataSource {
     }
 
     interface GetUserThumbnailsCallBack {
-        void onUserThumbnailLoaded();
+        void onUserThumbnailLoaded(UserThumbnail userThumbnail);
         void onDataNotAvailable();
     }
 
     void getUserThumbnails(LoadUserThumbnailsCallBack callBack);
+    void getUserThumbnail(String uid, GetUserThumbnailsCallBack callBack);
 }

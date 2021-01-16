@@ -1,6 +1,9 @@
 package com.familyset.randomchatting.chat;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +18,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +52,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new ChatAdapter(new ArrayList<Message>(0), mItemListener);
+        mAdapter = new ChatAdapter(new HashMap<>(0), new ArrayList<Message>(0), mItemListener);
     }
 
     @Nullable
@@ -90,14 +100,27 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     }
 
     @Override
-    public void showUserThumbnails(Map<String, UserThumbnail> users) { mAdapter.replaceUsersData(users);}
+    public void showUserThumbnails(Map<String, UserThumbnail> userThumbnails) { mAdapter.replaceUsersData(userThumbnails);}
+
+    @Override
+    public void showUserThumbnail(UserThumbnail userThumbnail, int position) {
+        mAdapter.replaceUserThumbnailData(userThumbnail, position);
+    }
+
+    @Override
+    public void clearEditText() {
+        editText.setText("");
+    }
 
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
     ChatAdapter.ChatItemListener mItemListener = new ChatAdapter.ChatItemListener() {
-
+        @Override
+        public void getUserThumbnail(String uid, int position) {
+            mPresenter.loadUserThumbnail(uid, position);
+        }
     };
 
     private static class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -105,7 +128,8 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         private List<Message> mMessages;
         private ChatItemListener mItemListener;
 
-        public ChatAdapter(List<Message> messages, ChatItemListener itemListener) {
+        public ChatAdapter(Map<String, UserThumbnail> userThumbnails, List<Message> messages, ChatItemListener itemListener) {
+            setUsersMap(userThumbnails);
             setMessagesList(messages);
             mItemListener = itemListener;
         }
@@ -113,6 +137,11 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         public void replaceUsersData(Map<String, UserThumbnail> users) {
             setUsersMap(users);
             notifyDataSetChanged();
+        }
+
+        public void replaceUserThumbnailData(UserThumbnail userThumbnail, int position) {
+            putUserThumbnail(userThumbnail);
+            notifyItemChanged(position);
         }
 
         public void replaceMessagesData(List<Message> messages) {
@@ -125,6 +154,10 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         }
 
         private void setUsersMap(Map<String, UserThumbnail> userThumbnails) { mUserThumbnails = userThumbnails; }
+
+        private void putUserThumbnail(UserThumbnail userThumbnail) {
+            mUserThumbnails.put(userThumbnail.getUid(), userThumbnail);
+        }
 
         private static class ChatViewHolder extends RecyclerView.ViewHolder {
             ImageView userPhotoView;
@@ -151,6 +184,10 @@ public class ChatFragment extends Fragment implements ChatContract.View {
                     });
                 }
             }
+
+            public View getView() {
+                return itemView;
+            }
         }
 
 
@@ -167,8 +204,20 @@ public class ChatFragment extends Fragment implements ChatContract.View {
             final Message message = mMessages.get(position);
 
             if (chatViewHolder.nameView != null) {
+                String uid = message.getUid();
+
                 // TODO map이 null일 때
-                chatViewHolder.nameView.setText(mUserThumbnails.get(message.getUid()).getNickname());
+                if (mUserThumbnails.get(uid) != null) {
+                    chatViewHolder.nameView.setText(mUserThumbnails.get(uid).getNickname());
+
+                    Glide.with(chatViewHolder.getView())
+                            .asBitmap()
+                            .load(BitmapFactory.decodeFile(mUserThumbnails.get(uid).getPhotoUrl()))
+                            .into(chatViewHolder.userPhotoView);
+                } else {
+                    Log.d("CHEKCGETNULL", String.valueOf(position) + ": " + message.getMsg());
+                    mItemListener.getUserThumbnail(uid, position);
+                }
             }
             chatViewHolder.msgView.setText(message.getMsg());
         }
@@ -190,7 +239,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         }
 
         public interface ChatItemListener {
-
+            void getUserThumbnail(String uid, int position);
         }
     }
 }

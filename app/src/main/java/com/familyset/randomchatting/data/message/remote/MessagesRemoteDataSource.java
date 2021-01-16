@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.LinkedHashMap;
@@ -39,7 +40,7 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
 
     @Override
     public void getMessages(LoadMessagesCallBack callBack) {
-        messagesColRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        messagesColRef.orderBy("timestamp", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 List<Message> messages = value.toObjects(Message.class);
