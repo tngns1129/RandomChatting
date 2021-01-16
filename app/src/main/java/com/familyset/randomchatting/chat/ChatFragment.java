@@ -107,6 +107,11 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         mAdapter.replaceUserThumbnailData(userThumbnail, position);
     }
 
+    @Override
+    public void clearEditText() {
+        editText.setText("");
+    }
+
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {
         mPresenter = presenter;
     }

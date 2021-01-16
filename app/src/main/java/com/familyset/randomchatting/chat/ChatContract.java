@@ -15,6 +15,8 @@ public interface ChatContract {
         void showMessages(List<Message> messages);
         void showUserThumbnails(Map<String, UserThumbnail> users);
         void showUserThumbnail(UserThumbnail userThumbnail, int position);
+
+        void clearEditText();
     }
 
     interface Presenter {

@@ -32,7 +32,11 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void saveMessage(String uid, String msg) {
-        createMessage(uid, msg);
+        if (!msg.equals("")) {
+            createMessage(uid, msg);
+
+            mView.clearEditText();
+        }
     }
 
     @Override
