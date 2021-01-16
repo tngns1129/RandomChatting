@@ -1,5 +1,6 @@
 package com.familyset.randomchatting.chat;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -36,7 +37,7 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void startListening() {
-        loadUsers();
+        loadUserThumbnails();
 
         loadMessages();
     }
@@ -76,7 +77,7 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
-    public void loadUsers() {
+    public void loadUserThumbnails() {
         mUserThumbnailsRepository.getUserThumbnails(new UserThumbnailsDataSource.LoadUserThumbnailsCallBack() {
             @Override
             public void onUserThumbnailsLoaded(List<UserThumbnail> userThumbnails) {
@@ -84,7 +85,7 @@ public class ChatPresenter implements ChatContract.Presenter {
 
                 for (UserThumbnail userThumbnail : userThumbnails) {
                     userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
-                    Log.d("CHEKC", userThumbnail.getNickname());
+                    Log.d("LOADCHeCK", userThumbnail.toString());
                 }
 
                 if (!mView.isActive()) {
@@ -92,6 +93,21 @@ public class ChatPresenter implements ChatContract.Presenter {
                 }
 
                 processUserThumbnails(userThumbnailsToShow);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+    }
+
+    @Override
+    public void loadUserThumbnail(String uid) {
+        mUserThumbnailsRepository.getUserThumbnail(uid, new UserThumbnailsDataSource.GetUserThumbnailsCallBack() {
+            @Override
+            public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
+                mView.showUserThumbnail(userThumbnail);
             }
 
             @Override
