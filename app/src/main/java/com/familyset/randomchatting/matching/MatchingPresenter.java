@@ -1,5 +1,7 @@
 package com.familyset.randomchatting.matching;
 
+import androidx.annotation.Nullable;
+
 import com.familyset.randomchatting.data.randomRoom.RandomRoomsDataSource;
 import com.familyset.randomchatting.data.randomRoom.RandomRoomsRepository;
 
@@ -23,7 +25,7 @@ public class MatchingPresenter implements MatchingContractor.Presenter {
     }
 
     @Override
-    public void startMatch(String uid) {
+    public void startMatch(String uid, @Nullable Integer sex) {
         mView.showSearching();
         mRandomRoomsRepository.searchEmptyRoom(uid, new RandomRoomsDataSource.SearchCallBack() {
             @Override

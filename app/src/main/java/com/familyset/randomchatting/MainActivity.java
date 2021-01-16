@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
                 fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.main_frame_layout, matchingFragment).commit();
-
             }
         });
 
@@ -53,4 +52,5 @@ public class MainActivity extends AppCompatActivity {
                 MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", "devRoom")));
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout, chatFragment).commit();
     }
+
 }

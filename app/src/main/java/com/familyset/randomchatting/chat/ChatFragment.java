@@ -1,9 +1,7 @@
 package com.familyset.randomchatting.chat;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,12 +21,9 @@ import com.bumptech.glide.Glide;
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
+import com.familyset.randomchatting.matching.MatchingDialogFragment;
+import com.familyset.randomchatting.matching.MatchingFragment;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +76,13 @@ public class ChatFragment extends Fragment implements ChatContract.View {
             }
         });
 
+        rematchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.rematching();
+            }
+        });
+
         return view;
     }
 
@@ -110,6 +113,12 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     @Override
     public void clearEditText() {
         editText.setText("");
+    }
+
+    @Override
+    public void showMatchingDialog() {
+        DialogFragment dialogFragment = new MatchingDialogFragment();
+        dialogFragment.show(getFragmentManager(), "MatchingDialogFragment");
     }
 
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {
@@ -215,7 +224,6 @@ public class ChatFragment extends Fragment implements ChatContract.View {
                             .load(BitmapFactory.decodeFile(mUserThumbnails.get(uid).getPhotoUrl()))
                             .into(chatViewHolder.userPhotoView);
                 } else {
-                    Log.d("CHEKCGETNULL", String.valueOf(position) + ": " + message.getMsg());
                     mItemListener.getUserThumbnail(uid, position);
                 }
             }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesDataSource;
@@ -11,6 +12,7 @@ import com.familyset.randomchatting.data.message.MessagesRepository;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsDataSource;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
+import com.familyset.randomchatting.matching.MatchingFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +91,6 @@ public class ChatPresenter implements ChatContract.Presenter {
 
                 for (UserThumbnail userThumbnail : userThumbnails) {
                     userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
-                    Log.d("LOADCHeCK", userThumbnail.toString());
                 }
 
                 if (!mView.isActive()) {
@@ -119,6 +120,11 @@ public class ChatPresenter implements ChatContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void rematching() {
+        mView.showMatchingDialog();
     }
 
     private void processUserThumbnails(Map<String, UserThumbnail> userThumbnails) {

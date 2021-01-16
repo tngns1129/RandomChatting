@@ -17,6 +17,7 @@ public interface ChatContract {
         void showUserThumbnail(UserThumbnail userThumbnail, int position);
 
         void clearEditText();
+        void showMatchingDialog();
     }
 
     interface Presenter {
@@ -26,5 +27,6 @@ public interface ChatContract {
         void loadMessages();
         void loadUserThumbnails();
         void loadUserThumbnail(String uid, int position);
+        void rematching();
     }
 }
