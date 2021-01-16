@@ -37,7 +37,7 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void startListening() {
-        loadUserThumbnails();
+        //loadUserThumbnails();
 
         loadMessages();
     }
@@ -103,11 +103,11 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
-    public void loadUserThumbnail(String uid) {
+    public void loadUserThumbnail(String uid, int position) {
         mUserThumbnailsRepository.getUserThumbnail(uid, new UserThumbnailsDataSource.GetUserThumbnailsCallBack() {
             @Override
             public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
-                mView.showUserThumbnail(userThumbnail);
+                mView.showUserThumbnail(userThumbnail, position);
             }
 
             @Override

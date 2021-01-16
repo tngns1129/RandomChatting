@@ -70,7 +70,7 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserThumbnail userThumbnail = documentSnapshot.toObject(UserThumbnail.class);
 
-                /*processUrlToFile(userThumbnail, new GetUserThumbnailsCallBack() {
+                processUrlToFile(userThumbnail, new GetUserThumbnailsCallBack() {
                     @Override
                     public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
                         callBack.onUserThumbnailLoaded(userThumbnail);
@@ -80,9 +80,27 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
                     public void onDataNotAvailable() {
 
                     }
-                });*/
+                });
             }
         });
+    }
+
+    private void processUrlToFile(UserThumbnail userThumbnail, GetUserThumbnailsCallBack callBack) {
+        try {
+            File file = File.createTempFile("images", "jpg");
+
+            mUsersThumbnailPhotosStorageRef.child(userThumbnail.getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("ThumbnailsUTF", file.toString());
+
+                    userThumbnail.setPhotoUrl(file.getPath());
+                    callBack.onUserThumbnailLoaded(userThumbnail);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void processUrlToFile(int i, LoadUserThumbnailsCallBack callBack) {

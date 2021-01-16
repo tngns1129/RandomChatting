@@ -14,7 +14,7 @@ public interface ChatContract {
 
         void showMessages(List<Message> messages);
         void showUserThumbnails(Map<String, UserThumbnail> users);
-        void showUserThumbnail(UserThumbnail userThumbnail);
+        void showUserThumbnail(UserThumbnail userThumbnail, int position);
     }
 
     interface Presenter {
@@ -23,6 +23,6 @@ public interface ChatContract {
         void stopListening();
         void loadMessages();
         void loadUserThumbnails();
-        void loadUserThumbnail(String uid);
+        void loadUserThumbnail(String uid, int position);
     }
 }
