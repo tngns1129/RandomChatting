@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.familyset.randomchatting.chat.ChatFragment;
 import com.familyset.randomchatting.chat.ChatPresenter;
@@ -18,9 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FragmentManager fragmentManager;
-    private ChatFragment chatFragment;
-    private MatchingFragment matchingFragment;
+    private FragmentManager mFragmentManager;
+    private ChatFragment mChatFragment;
+    private MatchingFragment mMatchingFragment;
     private FirebaseAuth mAuth;
 
     private ChatPresenter mChatPresenter;
@@ -35,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(AuthResult authResult) {
                 //mAuth.getCurrentUser().getUid();
 
-                chatFragment = new ChatFragment();
-                matchingFragment = new MatchingFragment();
+                mChatFragment = new ChatFragment();
+                mMatchingFragment = new MatchingFragment();
 
-                fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.main_frame_layout, matchingFragment).commit();
+                mFragmentManager = getSupportFragmentManager();
+                mFragmentManager.beginTransaction().replace(R.id.main_frame_layout, mMatchingFragment).commit();
             }
         });
 
@@ -47,10 +48,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showChatFragment(String rid) {
-        mChatPresenter = new ChatPresenter(chatFragment,
+        mChatPresenter = new ChatPresenter(mChatFragment,
                 UserThumbnailsRepository.getInstance(UserThumbnailsRemoteDataSource.getInstance("randomRooms", "devRoom")),
                 MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", "devRoom")));
-        fragmentManager.beginTransaction().replace(R.id.main_frame_layout, chatFragment).commit();
+        mFragmentManager.beginTransaction().replace(R.id.main_frame_layout, mChatFragment).commit();
+
+        if (mMatchingFragment.isAdded()) {
+            mFragmentManager.beginTransaction().hide(mMatchingFragment).commit();
+        }
+    }
+
+    public void showMatchingSelectFragment() {
+        if (!mMatchingFragment.isAdded()) {
+            Log.d("LOGCHECK", "CHCd");
+            mFragmentManager.beginTransaction().add(R.id.main_frame_layout, mMatchingFragment).commit();
+        }
+
+        //mMatchingFragment.showSelect();
+        Log.d("LOGCHECK", "CHCH");
+        mFragmentManager.beginTransaction().show(mMatchingFragment).commit();
+
+        Log.d("LOGCHECK", "CHCx");
     }
 
 }

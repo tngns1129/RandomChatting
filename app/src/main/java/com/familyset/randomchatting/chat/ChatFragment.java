@@ -12,17 +12,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.familyset.randomchatting.MainActivity;
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
-import com.familyset.randomchatting.matching.MatchingDialogFragment;
-import com.familyset.randomchatting.matching.MatchingFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,8 +115,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
 
     @Override
     public void showMatchingDialog() {
-        DialogFragment dialogFragment = new MatchingDialogFragment();
-        dialogFragment.show(getFragmentManager(), "MatchingDialogFragment");
+        ((MainActivity)getActivity()).showMatchingSelectFragment();
     }
 
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {
