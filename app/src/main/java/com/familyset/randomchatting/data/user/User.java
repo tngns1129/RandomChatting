@@ -1,17 +1,15 @@
-package com.familyset.randomchatting.data.userThumbnail;
+package com.familyset.randomchatting.data.user;
 
-import android.graphics.Bitmap;
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 
-import java.io.File;
-
-public class UserThumbnail {
+public class User {
     private String uid;
     private String photoUrl;
     private String nickname;
 
-    public UserThumbnail() {}
+    public User() {}
 
-    public UserThumbnail(String uid, String photoUrl, String nickname) {
+    public User(String uid, String photoUrl, String nickname) {
         this.uid = uid;
         this.photoUrl = photoUrl;
         this.nickname = nickname;
@@ -39,5 +37,11 @@ public class UserThumbnail {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public UserThumbnail getUserThumbnail() {
+        UserThumbnail userThumbnail = new UserThumbnail(uid, photoUrl, nickname);
+
+        return userThumbnail;
     }
 }

@@ -19,7 +19,6 @@ import com.familyset.randomchatting.data.randomRoom.RandomRoomsRepository;
 
 public class MatchingFragment extends Fragment implements MatchingContractor.View {
     private MatchingContractor.Presenter mPresenter;
-    private String uid;
 
     private Button matchingBtn;
     /*
@@ -34,9 +33,6 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_matching, container, false);
 
-        uid = "asdfs";
-        mPresenter = new MatchingPresenter(this, new RandomRoomsRepository());
-
         /*
         statusLinearLayout = view.findViewById(R.id.matching_linear_status);
         selectLinearLayout = view.findViewById(R.id.matching_linear_select);
@@ -49,14 +45,14 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
             @Override
             public void onClick(View v) {
                 //showSelect();
-                mPresenter.startMatch(uid, null);
+                mPresenter.startMatch(null);
             }
         });
 
         matchingBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                mPresenter.enterDevRoom(uid);
+                mPresenter.enterDevRoom();
                 return false;
             }
         });
@@ -96,10 +92,14 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
         selectLinearLayout.setVisibility(View.VISIBLE);
     }
     */
+    public void initView() {
+        matchingBtn.setEnabled(true);
+        matchingBtn.setText("매칭 시작");
+    }
+
     // 채팅 프래그먼트로 전환, Room 정보를 인자로 주는 게 나아보임
     @Override
     public void showChatFragment(String rid) {
-        //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_layout, new ChatFragment()).commit();
         if (rid.equals("devRoom")) {
             Toast.makeText(getContext(), "개발자 방 입장", Toast.LENGTH_SHORT).show();
         }
@@ -112,6 +112,7 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
     public void showSearching() {
         //selectLinearLayout.setVisibility(View.GONE);
         //statusLinearLayout.setVisibility(View.VISIBLE);
+        matchingBtn.setEnabled(false);
         matchingBtn.setText("빈 방 검색중");
     }
 
@@ -125,5 +126,10 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
     @Override
     public void showWaiting() {
         matchingBtn.setText("매칭 대기 중");
+    }
+
+    @Override
+    public void setPresenter(MatchingContractor.Presenter presenter) {
+        mPresenter = presenter;
     }
 }

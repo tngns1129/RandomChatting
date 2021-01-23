@@ -1,5 +1,7 @@
 package com.familyset.randomchatting.data.randomRoom;
 
+import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
+
 import javax.annotation.Nullable;
 
 public interface RandomRoomsDataSource {
@@ -13,6 +15,7 @@ public interface RandomRoomsDataSource {
         void onMatchFinished(String rid);
     }
 
-    void searchEmptyRoom(String uid, SearchCallBack callBack);
-    void createRoom(String uid, CreateCallBack callBack);
+    void searchEmptyRoom(UserThumbnail userThumbnail, SearchCallBack callBack);
+    void createRoom(UserThumbnail userThumbnail, CreateCallBack callBack);
+    void quitRoom(String uid, String rid);
 }

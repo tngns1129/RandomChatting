@@ -8,10 +8,12 @@ public interface MatchingContractor {
         void showSearching();
         void showCreating();
         void showWaiting();
+        void setPresenter(Presenter presenter);
     }
 
     interface Presenter {
-        void startMatch(String uid, @Nullable Integer sex);
-        void enterDevRoom(String uid);
+        void startMatch(@Nullable Integer sex);
+        void enterDevRoom();
+        void quitRoom();
     }
 }

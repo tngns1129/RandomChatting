@@ -8,5 +8,10 @@ public interface UsersDataSource {
     }
 
     interface GetUsersCallBack {
+        void onUserLoaded(User user);
+        void onDataNotAvailable();
     }
+
+    void getUser(String uid, GetUsersCallBack callBack);
+    void setUser(User user);
 }

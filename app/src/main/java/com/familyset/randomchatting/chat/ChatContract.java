@@ -13,20 +13,20 @@ public interface ChatContract {
         boolean isActive();
 
         void showMessages(List<Message> messages);
-        void showUserThumbnails(Map<String, UserThumbnail> users);
         void showUserThumbnail(UserThumbnail userThumbnail, int position);
+        void showUserThumbnails(Map<String, UserThumbnail> userThumbnails);
 
         void clearEditText();
         void showMatchingDialog();
     }
 
     interface Presenter {
-        void saveMessage(String uid, String msg);
+        void saveMessage(String msg);
         void startListening();
         void stopListening();
         void loadMessages();
+        void getUserThumbnail(String uid, int position);
         void loadUserThumbnails();
-        void loadUserThumbnail(String uid, int position);
         void rematching();
     }
 }

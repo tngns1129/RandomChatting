@@ -42,6 +42,11 @@ public class MessagesRepository implements MessagesDataSource {
         mMessagesRemoteDataSource.saveMessage(message);
     }
 
+    @Override
+    public void stopLoadingMessages() {
+        mMessagesRemoteDataSource.stopLoadingMessages();
+    }
+
     private void getMessagesFromRemoteDataSource(@NonNull LoadMessagesCallBack callBack) {
         mMessagesRemoteDataSource.getMessages(new LoadMessagesCallBack() {
             @Override
