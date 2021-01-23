@@ -20,4 +20,14 @@ public class UsersRepository implements UsersDataSource {
 
         return INSTANCE;
     }
+
+    @Override
+    public void getUser(String uid, GetUsersCallBack callBack) {
+        mUsersRemoteDataSource.getUser(uid, callBack);
+    }
+
+    @Override
+    public void setUser(User user) {
+        mUsersRemoteDataSource.setUser(user);
+    }
 }

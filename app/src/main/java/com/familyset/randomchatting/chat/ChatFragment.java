@@ -1,9 +1,7 @@
 package com.familyset.randomchatting.chat;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,19 +17,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.familyset.randomchatting.MainActivity;
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
+import com.familyset.randomchatting.util.PreferenceManager;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ChatFragment extends Fragment implements ChatContract.View {
 
@@ -46,13 +42,11 @@ public class ChatFragment extends Fragment implements ChatContract.View {
 
     private ChatAdapter mAdapter;
 
-    String uid = "asdfs";
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAdapter = new ChatAdapter(new HashMap<>(0), new ArrayList<Message>(0), mItemListener);
+        mAdapter.setUid(PreferenceManager.getString(getContext(), "UID"));
     }
 
     @Nullable
@@ -76,7 +70,14 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveMessage(uid, editText.getText().toString());
+                mPresenter.saveMessage(editText.getText().toString());
+            }
+        });
+
+        rematchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.rematching();
             }
         });
 
@@ -90,6 +91,17 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.stopListening();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public boolean isActive() {
         return isAdded();
     }
@@ -100,16 +112,23 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     }
 
     @Override
-    public void showUserThumbnails(Map<String, UserThumbnail> userThumbnails) { mAdapter.replaceUsersData(userThumbnails);}
-
-    @Override
     public void showUserThumbnail(UserThumbnail userThumbnail, int position) {
         mAdapter.replaceUserThumbnailData(userThumbnail, position);
     }
 
     @Override
+    public void showUserThumbnails(Map<String, UserThumbnail> userThumbnails) {
+
+    }
+
+    @Override
     public void clearEditText() {
         editText.setText("");
+    }
+
+    @Override
+    public void showMatchingDialog() {
+        ((MainActivity)getActivity()).showMatchingFragment();
     }
 
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {
@@ -119,11 +138,12 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     ChatAdapter.ChatItemListener mItemListener = new ChatAdapter.ChatItemListener() {
         @Override
         public void getUserThumbnail(String uid, int position) {
-            mPresenter.loadUserThumbnail(uid, position);
+            mPresenter.getUserThumbnail(uid, position);
         }
     };
 
     private static class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private String mUid;
         private Map<String, UserThumbnail> mUserThumbnails;
         private List<Message> mMessages;
         private ChatItemListener mItemListener;
@@ -134,11 +154,6 @@ public class ChatFragment extends Fragment implements ChatContract.View {
             mItemListener = itemListener;
         }
 
-        public void replaceUsersData(Map<String, UserThumbnail> users) {
-            setUsersMap(users);
-            notifyDataSetChanged();
-        }
-
         public void replaceUserThumbnailData(UserThumbnail userThumbnail, int position) {
             putUserThumbnail(userThumbnail);
             notifyItemChanged(position);
@@ -147,6 +162,10 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         public void replaceMessagesData(List<Message> messages) {
             setMessagesList(messages);
             notifyDataSetChanged();
+        }
+
+        public void setUid(String uid) {
+            mUid = uid;
         }
 
         private void setMessagesList(List<Message> messages) {
@@ -215,7 +234,6 @@ public class ChatFragment extends Fragment implements ChatContract.View {
                             .load(BitmapFactory.decodeFile(mUserThumbnails.get(uid).getPhotoUrl()))
                             .into(chatViewHolder.userPhotoView);
                 } else {
-                    Log.d("CHEKCGETNULL", String.valueOf(position) + ": " + message.getMsg());
                     mItemListener.getUserThumbnail(uid, position);
                 }
             }
@@ -226,7 +244,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         public int getItemViewType(int position) {
             Message message = mMessages.get(position);
 
-            if (message.getUid().equals("asdfs")) {
+            if (message.getUid().equals(mUid)) {
                 return R.layout.item_chat_msg_right;
             } else {
                 return R.layout.item_chat_msg_left;

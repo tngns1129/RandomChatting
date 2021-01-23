@@ -29,4 +29,9 @@ public class UserThumbnailsRepository implements UserThumbnailsDataSource {
     public void getUserThumbnail(String uid, GetUserThumbnailsCallBack callBack) {
         mUsersThumbnailsRemoteDataSource.getUserThumbnail(uid, callBack);
     }
+
+    @Override
+    public void stopLoadingUserThumbnails() {
+        mUsersThumbnailsRemoteDataSource.stopLoadingUserThumbnails();
+    }
 }

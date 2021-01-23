@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesDataSource;
@@ -11,6 +12,7 @@ import com.familyset.randomchatting.data.message.MessagesRepository;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsDataSource;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
+import com.familyset.randomchatting.matching.MatchingFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,17 +25,21 @@ public class ChatPresenter implements ChatContract.Presenter {
     private MessagesRepository mMessagesRepository;
     private boolean mFirstLoad = true;
 
-    public ChatPresenter(@NonNull ChatContract.View view, @NonNull UserThumbnailsRepository userThumbnailsRepository, @NonNull MessagesRepository messagesRepository) {
+    private String mUid;
+
+    public ChatPresenter(String uid, @NonNull ChatContract.View view, @NonNull UserThumbnailsRepository userThumbnailsRepository, @NonNull MessagesRepository messagesRepository) {
+        mUid = uid;
         mView = view;
         mUserThumbnailsRepository = userThumbnailsRepository;
         mMessagesRepository = messagesRepository;
+
         mView.setPresenter(this);
     }
 
     @Override
-    public void saveMessage(String uid, String msg) {
+    public void saveMessage(String msg) {
         if (!msg.equals("")) {
-            createMessage(uid, msg);
+            createMessage(mUid, msg);
 
             mView.clearEditText();
         }
@@ -48,7 +54,9 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void stopListening() {
+        stopLoadingUserThumbnails();
 
+        stopLoadingMessages();
     }
 
     @Override
@@ -89,7 +97,6 @@ public class ChatPresenter implements ChatContract.Presenter {
 
                 for (UserThumbnail userThumbnail : userThumbnails) {
                     userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
-                    Log.d("LOADCHeCK", userThumbnail.toString());
                 }
 
                 if (!mView.isActive()) {
@@ -107,7 +114,7 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
-    public void loadUserThumbnail(String uid, int position) {
+    public void getUserThumbnail(String uid, int position) {
         mUserThumbnailsRepository.getUserThumbnail(uid, new UserThumbnailsDataSource.GetUserThumbnailsCallBack() {
             @Override
             public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
@@ -119,6 +126,19 @@ public class ChatPresenter implements ChatContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void rematching() {
+        mView.showMatchingDialog();
+    }
+
+    private void stopLoadingUserThumbnails() {
+        mUserThumbnailsRepository.stopLoadingUserThumbnails();
+    }
+
+    private void stopLoadingMessages() {
+        mMessagesRepository.stopLoadingMessages();
     }
 
     private void processUserThumbnails(Map<String, UserThumbnail> userThumbnails) {

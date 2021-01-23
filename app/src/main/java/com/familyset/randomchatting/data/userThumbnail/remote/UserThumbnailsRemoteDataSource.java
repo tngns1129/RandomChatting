@@ -15,6 +15,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FileDownloadTask;
@@ -28,8 +29,9 @@ import java.util.List;
 
 public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource {
     private static UserThumbnailsRemoteDataSource INSTANCE = null;
-    private final CollectionReference mUsersThumbnailsColRef;
-    private final StorageReference mUsersThumbnailPhotosStorageRef;
+    private final CollectionReference mUserThumbnailsColRef;
+    private final StorageReference mUserThumbnailPhotosStorageRef;
+    private ListenerRegistration mUserThumbnailsListenerRegistration;
 
     private List<UserThumbnail> mUserThumbnails;
 
@@ -42,13 +44,13 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
     }
 
     private UserThumbnailsRemoteDataSource(@NonNull String colRef, @NonNull String docRef) {
-        mUsersThumbnailsColRef = FirebaseFirestore.getInstance().collection(colRef).document(docRef).collection("userThumbnails");
-        mUsersThumbnailPhotosStorageRef = FirebaseStorage.getInstance().getReference("user_photos/");
+        mUserThumbnailsColRef = FirebaseFirestore.getInstance().collection(colRef).document(docRef).collection("userThumbnails");
+        mUserThumbnailPhotosStorageRef = FirebaseStorage.getInstance().getReference("user_photos/");
     }
 
     @Override
     public void getUserThumbnails(LoadUserThumbnailsCallBack callBack) {
-        mUsersThumbnailsColRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mUserThumbnailsListenerRegistration = mUserThumbnailsColRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 //List<UserThumbnail> userThumbnails = value.toObjects(UserThumbnail.class);
@@ -65,7 +67,7 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
 
     @Override
     public void getUserThumbnail(String uid, GetUserThumbnailsCallBack callBack) {
-        mUsersThumbnailsColRef.document(uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        mUserThumbnailsColRef.document(uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserThumbnail userThumbnail = documentSnapshot.toObject(UserThumbnail.class);
@@ -85,11 +87,18 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
         });
     }
 
+    @Override
+    public void stopLoadingUserThumbnails() {
+        if (mUserThumbnailsListenerRegistration != null) {
+            mUserThumbnailsListenerRegistration.remove();
+        }
+    }
+
     private void processUrlToFile(UserThumbnail userThumbnail, GetUserThumbnailsCallBack callBack) {
         try {
             File file = File.createTempFile("images", "jpg");
 
-            mUsersThumbnailPhotosStorageRef.child(userThumbnail.getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            mUserThumbnailPhotosStorageRef.child(userThumbnail.getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Log.d("ThumbnailsUTF", file.toString());
@@ -112,7 +121,7 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
         try {
             File file = File.createTempFile("images", "jpg");
 
-            mUsersThumbnailPhotosStorageRef.child(mUserThumbnails.get(i).getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            mUserThumbnailPhotosStorageRef.child(mUserThumbnails.get(i).getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Log.d("ThumbnailsUTF", file.toString());
