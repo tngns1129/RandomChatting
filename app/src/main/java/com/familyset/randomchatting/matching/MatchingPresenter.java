@@ -17,7 +17,7 @@ public class MatchingPresenter implements MatchingContractor.Presenter {
     private RandomRoomsRepository mRandomRoomsRepository;
     private UsersRepository mUsersRepository;
 
-    private int matchState = 0; // not matched = 0, matched = 1
+    private int mMatchState = 0; // not matched = 0, matched = 1
     private String mUid = null;
     private String mRid = null;
 
@@ -68,7 +68,7 @@ public class MatchingPresenter implements MatchingContractor.Presenter {
             mRandomRoomsRepository.quitRoom(mUid, mRid);
         }
 
-        matchState = 0;
+        mMatchState = 0;
         mRid = null;
     }
 
@@ -88,19 +88,38 @@ public class MatchingPresenter implements MatchingContractor.Presenter {
 
                         @Override
                         public void onMatchFinished(String rid) {
-                            matchState = 1;
+                            mMatchState = 1;
                             mRid = rid;
 
                             mView.showChatFragment(mRid);
                         }
                     });
                 } else {
-                    matchState = 1;
+                    mMatchState = 1;
                     mRid = rid;
 
                     mView.showChatFragment(mRid);
                 }
             }
         });
+    }
+
+    @Override
+    public void restartMatch(@Nullable Integer sex) {
+        if (mMatchState == 1) {
+            quitRoom();
+        }
+
+        startMatch(sex);
+    }
+
+    @Override
+    public int getMatchState() {
+        return mMatchState;
+    }
+
+    @Override
+    public void setMatchState(int matchState) {
+        mMatchState = matchState;
     }
 }
