@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesDataSource;
 import com.familyset.randomchatting.data.message.MessagesRepository;
+import com.familyset.randomchatting.data.user.User;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsDataSource;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
@@ -23,15 +24,20 @@ public class ChatPresenter implements ChatContract.Presenter {
     private ChatContract.View mView;
     private UserThumbnailsRepository mUserThumbnailsRepository;
     private MessagesRepository mMessagesRepository;
-    private boolean mFirstLoad = true;
 
+    private boolean mFirstLoad = true;
     private String mUid;
+    private List<Message> mMessages;
+    private Map<String, UserThumbnail> mUserThumbnails;
 
     public ChatPresenter(String uid, @NonNull ChatContract.View view, @NonNull UserThumbnailsRepository userThumbnailsRepository, @NonNull MessagesRepository messagesRepository) {
         mUid = uid;
         mView = view;
         mUserThumbnailsRepository = userThumbnailsRepository;
         mMessagesRepository = messagesRepository;
+
+        mMessages = new ArrayList<>();
+        mUserThumbnails = new HashMap<>();
 
         mView.setPresenter(this);
     }
@@ -68,17 +74,20 @@ public class ChatPresenter implements ChatContract.Presenter {
         mMessagesRepository.getMessages(new MessagesDataSource.LoadMessagesCallBack() {
             @Override
             public void onMessagesLoaded(List<Message> messages) {
-                List<Message> messagesToShow = new ArrayList<Message>();
+                //List<Message> messagesToShow = new ArrayList<Message>();
+                mMessages = new ArrayList<Message>();
 
                 for (Message message : messages) {
-                    messagesToShow.add(message);
+                    //messagesToShow.add(message);
+                    mMessages.add(message);
                 }
 
                 if (!mView.isActive()) {
                     return;
                 }
 
-                processMessages(messagesToShow);
+                //processMessages(messagesToShow);
+                processMessages(mMessages);
             }
 
             @Override
@@ -118,7 +127,13 @@ public class ChatPresenter implements ChatContract.Presenter {
         mUserThumbnailsRepository.getUserThumbnail(uid, new UserThumbnailsDataSource.GetUserThumbnailsCallBack() {
             @Override
             public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
-                mView.showUserThumbnail(userThumbnail, position);
+                 mUserThumbnails.put(userThumbnail.getUid(), userThumbnail);
+
+                 if (!mView.isActive()) {
+                     return;
+                 }
+
+                mView.showUserThumbnail(position);
             }
 
             @Override
@@ -133,6 +148,39 @@ public class ChatPresenter implements ChatContract.Presenter {
         mView.showMatchingFragment();
     }
 
+    @Override
+    public void onBindViewHolder(int position, ChatContract.RecyclerRowView holder) {
+        Message message = mMessages.get(position);
+
+        String uid = message.getUid();
+
+        if (!uid.equals(mUid)) {
+            if (mUserThumbnails.get(uid) != null) {
+                holder.setUserThumbnail(mUserThumbnails.get(uid));
+            } else {
+                getUserThumbnail(uid, position);
+            }
+        }
+
+        holder.setMsg(message.getMsg());
+    }
+
+    @Override
+    public boolean getItemViewType(int position) {
+        Message message = mMessages.get(position);
+
+        if (message.getUid().equals(mUid)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mMessages.size();
+    }
+
     private void stopLoadingUserThumbnails() {
         mUserThumbnailsRepository.stopLoadingUserThumbnails();
     }
@@ -145,7 +193,7 @@ public class ChatPresenter implements ChatContract.Presenter {
         if (userThumbnails.isEmpty()) {
 
         } else {
-            mView.showUserThumbnails(userThumbnails);
+            mView.showUserThumbnails();
         }
     }
 
@@ -154,7 +202,7 @@ public class ChatPresenter implements ChatContract.Presenter {
 
         } else {
             // Show the list of messages
-            mView.showMessages(messages);
+            mView.showMessages();
         }
     }
 

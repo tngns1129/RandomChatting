@@ -1,5 +1,7 @@
 package com.familyset.randomchatting.chat;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 
@@ -12,12 +14,17 @@ public interface ChatContract {
 
         boolean isActive();
 
-        void showMessages(List<Message> messages);
-        void showUserThumbnail(UserThumbnail userThumbnail, int position);
-        void showUserThumbnails(Map<String, UserThumbnail> userThumbnails);
+        void showMessages();
+        void showUserThumbnail(int position);
+        void showUserThumbnails();
 
         void clearEditText();
         void showMatchingFragment();
+    }
+
+    interface RecyclerRowView {
+        void setUserThumbnail(UserThumbnail userThumbnail);
+        void setMsg(String msg);
     }
 
     interface Presenter {
@@ -28,5 +35,9 @@ public interface ChatContract {
         void getUserThumbnail(String uid, int position);
         void loadUserThumbnails();
         void rematching();
+
+        void onBindViewHolder(int position, ChatContract.RecyclerRowView holder);
+        boolean getItemViewType(int position);
+        int getItemCount();
     }
 }
