@@ -9,11 +9,15 @@ public interface MatchingContractor {
         void showCreating();
         void showWaiting();
         void setPresenter(Presenter presenter);
+        void initView(int matchState);
     }
 
     interface Presenter {
         void startMatch(@Nullable Integer sex);
         void enterDevRoom();
         void quitRoom();
+        void restartMatch(@Nullable Integer sex);
+        int getMatchState();
+        void setMatchState(int matchState);
     }
 }

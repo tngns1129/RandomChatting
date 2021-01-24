@@ -100,7 +100,7 @@ public class RandomRoomsRepository implements RandomRoomsDataSource {
                     // 유저목록에 추가
                     users.put(mUserThumbnail.getUid(), 0);
                     transaction.update(roomSnapshot.getReference(), "users", users, "isMatched", 1);
-                    transaction.set(roomSnapshot.getReference().collection("userThumbnail").document(mUserThumbnail.getUid()), mUserThumbnail);
+                    transaction.set(roomSnapshot.getReference().collection("userThumbnails").document(mUserThumbnail.getUid()), mUserThumbnail);
                     return roomSnapshot.getString("id");
                 }
 

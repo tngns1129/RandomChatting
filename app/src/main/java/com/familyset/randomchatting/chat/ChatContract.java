@@ -17,7 +17,7 @@ public interface ChatContract {
         void showUserThumbnails(Map<String, UserThumbnail> userThumbnails);
 
         void clearEditText();
-        void showMatchingDialog();
+        void showMatchingFragment();
     }
 
     interface Presenter {

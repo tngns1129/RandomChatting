@@ -85,16 +85,29 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
         return view;
     }
 
-    /*
-    private void showSelect() {
-        matchingBtn.setEnabled(false);
-        statusLinearLayout.setVisibility(View.GONE);
-        selectLinearLayout.setVisibility(View.VISIBLE);
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("MATCH_STATE", mPresenter.getMatchState());
     }
-    */
-    public void initView() {
+
+    /*
+        private void showSelect() {
+            matchingBtn.setEnabled(false);
+            statusLinearLayout.setVisibility(View.GONE);
+            selectLinearLayout.setVisibility(View.VISIBLE);
+        }
+        */
+
+    @Override
+    public void initView(int matchState) {
         matchingBtn.setEnabled(true);
-        matchingBtn.setText("매칭 시작");
+
+        if (matchState == 0) {
+            matchingBtn.setText("매칭 시작");
+        } else {
+            matchingBtn.setText("재매칭 시작");
+        }
     }
 
     // 채팅 프래그먼트로 전환, Room 정보를 인자로 주는 게 나아보임

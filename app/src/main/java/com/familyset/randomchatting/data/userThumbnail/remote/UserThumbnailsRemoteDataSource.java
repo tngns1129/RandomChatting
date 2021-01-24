@@ -72,17 +72,22 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserThumbnail userThumbnail = documentSnapshot.toObject(UserThumbnail.class);
 
-                processUrlToFile(userThumbnail, new GetUserThumbnailsCallBack() {
-                    @Override
-                    public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
-                        callBack.onUserThumbnailLoaded(userThumbnail);
-                    }
+                if (!userThumbnail.getPhotoUrl().equals("")) {
+                    processUrlToFile(userThumbnail, new GetUserThumbnailsCallBack() {
+                        @Override
+                        public void onUserThumbnailLoaded(UserThumbnail userThumbnail) {
+                            callBack.onUserThumbnailLoaded(userThumbnail);
+                        }
 
-                    @Override
-                    public void onDataNotAvailable() {
+                        @Override
+                        public void onDataNotAvailable() {
 
-                    }
-                });
+                        }
+                    });
+                } else {
+                    callBack.onUserThumbnailLoaded(userThumbnail);
+                }
+
             }
         });
     }
@@ -98,7 +103,7 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
         try {
             File file = File.createTempFile("images", "jpg");
 
-            mUserThumbnailPhotosStorageRef.child(userThumbnail.getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            mUserThumbnailPhotosStorageRef.child(userThumbnail.getUid()).child(userThumbnail.getPhotoUrl() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Log.d("ThumbnailsUTF", file.toString());

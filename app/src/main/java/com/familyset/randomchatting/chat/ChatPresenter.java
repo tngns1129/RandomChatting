@@ -130,7 +130,7 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void rematching() {
-        mView.showMatchingDialog();
+        mView.showMatchingFragment();
     }
 
     private void stopLoadingUserThumbnails() {
