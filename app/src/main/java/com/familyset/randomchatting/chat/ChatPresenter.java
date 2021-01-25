@@ -67,15 +67,20 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void loadMessages() {
-        if (mFirstLoad) {
-            mFirstLoad = false;
+        loadMessages(mFirstLoad);
+        mFirstLoad = false;
+    }
+
+    private void loadMessages(boolean forceUpdate) {
+        if (forceUpdate) {
+            mMessagesRepository.refreshMessages();
         }
 
         mMessagesRepository.getMessages(new MessagesDataSource.LoadMessagesCallBack() {
             @Override
             public void onMessagesLoaded(List<Message> messages) {
                 //List<Message> messagesToShow = new ArrayList<Message>();
-                mMessages = new ArrayList<Message>();
+                mMessages = new ArrayList<>();
 
                 for (Message message : messages) {
                     //messagesToShow.add(message);
@@ -158,7 +163,7 @@ public class ChatPresenter implements ChatContract.Presenter {
             if (mUserThumbnails.get(uid) != null) {
                 holder.setUserThumbnail(mUserThumbnails.get(uid));
             } else {
-                getUserThumbnail(uid, position);
+                //getUserThumbnail(uid, position);
             }
         }
 

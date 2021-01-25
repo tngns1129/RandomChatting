@@ -118,7 +118,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
 
     @Override
     public void showUserThumbnails() {
-
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
