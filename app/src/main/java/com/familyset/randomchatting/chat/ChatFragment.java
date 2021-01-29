@@ -123,7 +123,9 @@ public class ChatFragment extends Fragment implements ChatContract.View {
 
     @Override
     public void clearEditText() {
-        editText.setText("");
+        if (editText.getText().length() > 0) {
+            editText.getText().clear();
+        }
     }
 
     @Override

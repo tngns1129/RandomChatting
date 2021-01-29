@@ -60,9 +60,9 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void stopListening() {
-        stopLoadingUserThumbnails();
+        //stopLoadingUserThumbnails();
 
-        stopLoadingMessages();
+        //stopLoadingMessages();
     }
 
     @Override
@@ -107,17 +107,20 @@ public class ChatPresenter implements ChatContract.Presenter {
         mUserThumbnailsRepository.getUserThumbnails(new UserThumbnailsDataSource.LoadUserThumbnailsCallBack() {
             @Override
             public void onUserThumbnailsLoaded(List<UserThumbnail> userThumbnails) {
-                Map<String, UserThumbnail> userThumbnailsToShow = new HashMap<String, UserThumbnail>();
+                //Map<String, UserThumbnail> userThumbnailsToShow = new HashMap<String, UserThumbnail>();
+                mUserThumbnails = new HashMap<>();
 
                 for (UserThumbnail userThumbnail : userThumbnails) {
-                    userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
+                    //userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
+                    mUserThumbnails.put(userThumbnail.getUid(), userThumbnail);
                 }
 
                 if (!mView.isActive()) {
                     return;
                 }
 
-                processUserThumbnails(userThumbnailsToShow);
+                //processUserThumbnails(userThumbnailsToShow);
+                processUserThumbnails(mUserThumbnails);
             }
 
             @Override
@@ -152,6 +155,7 @@ public class ChatPresenter implements ChatContract.Presenter {
     public void rematching() {
         mView.showMatchingFragment();
     }
+
 
     @Override
     public void onBindViewHolder(int position, ChatContract.RecyclerRowView holder) {

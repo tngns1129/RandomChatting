@@ -1,5 +1,7 @@
 package com.familyset.randomchatting.data.message;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.familyset.randomchatting.data.message.remote.MessagesRemoteDataSource;
@@ -12,7 +14,6 @@ import java.util.Map;
 public class MessagesRepository implements MessagesDataSource {
     private static MessagesRepository INSTANCE = null;
     private final MessagesRemoteDataSource mMessagesRemoteDataSource;
-
 
     private Map<String, Message> mCachedMessages;
     private boolean mCacheIsDirty = false;
@@ -58,6 +59,11 @@ public class MessagesRepository implements MessagesDataSource {
     @Override
     public void saveMessage(@NonNull Message message) {
         mMessagesRemoteDataSource.saveMessage(message);
+
+        if (mCachedMessages == null) {
+            mCachedMessages = new LinkedHashMap<>();
+        }
+        mCachedMessages.put(message.getId(), message);
     }
 
     @Override

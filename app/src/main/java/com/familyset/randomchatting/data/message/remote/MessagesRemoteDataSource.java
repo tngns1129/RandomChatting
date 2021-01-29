@@ -45,17 +45,6 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
         mMessagesListenerRegistration = messagesColRef.orderBy("timestamp", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-
-                for (DocumentChange documentChange : value.getDocumentChanges()) {
-                    switch (documentChange.getType()) {
-                        case ADDED:
-                            Message message = documentChange.getDocument().toObject(Message.class);
-                            Log.d("CJHC", message.getMsg());
-                            break;
-                    }
-                }
-
-
                 List<Message> messages = value.toObjects(Message.class);
                 if (messages.isEmpty()) {
                     callBack.onDataNotAvailable();
