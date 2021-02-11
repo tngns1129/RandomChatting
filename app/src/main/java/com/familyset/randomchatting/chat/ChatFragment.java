@@ -81,6 +81,20 @@ public class ChatFragment extends Fragment implements ChatContract.View {
             }
         });
 
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                if (i3 < i7) {
+                    recyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.smoothScrollToPosition(0);
+                        }
+                    }, 100);
+                }
+            }
+        });
+
         return view;
     }
 
@@ -109,6 +123,13 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     @Override
     public void showMessages() {
         mAdapter.notifyDataSetChanged();
+
+        recyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView.smoothScrollToPosition(0);
+            }
+        }, 100);
     }
 
     @Override
