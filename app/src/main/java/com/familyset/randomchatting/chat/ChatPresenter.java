@@ -53,7 +53,7 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void startListening() {
-        //loadUserThumbnails();
+        loadUserThumbnails();
 
         loadMessages();
     }

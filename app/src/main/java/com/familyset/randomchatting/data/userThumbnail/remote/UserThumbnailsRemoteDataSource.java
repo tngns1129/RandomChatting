@@ -126,7 +126,9 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
         try {
             File file = File.createTempFile("images", "jpg");
 
-            mUserThumbnailPhotosStorageRef.child(mUserThumbnails.get(i).getUid() + ".jpg").getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            mUserThumbnailPhotosStorageRef.child(mUserThumbnails.get(i).getUid())
+                    .child(mUserThumbnails.get(i).getPhotoUrl()+ ".jpg").getFile(file)
+                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Log.d("ThumbnailsUTF", file.toString());
