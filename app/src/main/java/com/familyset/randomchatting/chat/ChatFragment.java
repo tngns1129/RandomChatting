@@ -2,6 +2,7 @@ package com.familyset.randomchatting.chat;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ import java.util.UUID;
 public class ChatFragment extends Fragment implements ChatContract.View {
 
     private ChatContract.Presenter mPresenter;
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
 
     private EditText editText;
@@ -55,11 +56,11 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         View view = inflater.inflate(R.layout.fragment_chat,container, false);
 
         // set up messages view
-        recyclerView = view.findViewById(R.id.chat_recycler_view);
+        mRecyclerView = view.findViewById(R.id.chat_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(getContext());
-        mLinearLayoutManager.setReverseLayout(true);
-        recyclerView.setLayoutManager(mLinearLayoutManager);
-        recyclerView.setAdapter(mAdapter);
+        mLinearLayoutManager.setStackFromEnd(true);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
 
         // set up chat view
         editText = view.findViewById(R.id.chat_edit_text_msg);
@@ -78,6 +79,20 @@ public class ChatFragment extends Fragment implements ChatContract.View {
             @Override
             public void onClick(View v) {
                 mPresenter.rematching();
+            }
+        });
+
+        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom < oldBottom) {
+                    mRecyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.scrollBy(0, oldBottom - bottom + editText.getHeight());
+                        }
+                    });
+                }
             }
         });
 
@@ -109,6 +124,16 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     @Override
     public void showMessages() {
         mAdapter.notifyDataSetChanged();
+
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("asdf2", "sdf");
+
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                mRecyclerView.scrollBy(0, editText.getHeight());
+            }
+        }, 100);
     }
 
     @Override
@@ -118,12 +143,25 @@ public class ChatFragment extends Fragment implements ChatContract.View {
 
     @Override
     public void showUserThumbnails() {
+        mAdapter.notifyDataSetChanged();
 
+
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("asdf2", "sdf");
+
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                mRecyclerView.scrollBy(0, editText.getHeight());
+            }
+        }, 100);
     }
 
     @Override
     public void clearEditText() {
-        editText.setText("");
+        if (editText.getText().length() > 0) {
+            editText.getText().clear();
+        }
     }
 
     @Override

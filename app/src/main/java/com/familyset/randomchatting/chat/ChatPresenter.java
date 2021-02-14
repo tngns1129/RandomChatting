@@ -53,29 +53,34 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void startListening() {
-        //loadUserThumbnails();
+        loadUserThumbnails();
 
         loadMessages();
     }
 
     @Override
     public void stopListening() {
-        stopLoadingUserThumbnails();
+        //stopLoadingUserThumbnails();
 
-        stopLoadingMessages();
+        //stopLoadingMessages();
     }
 
     @Override
     public void loadMessages() {
-        if (mFirstLoad) {
-            mFirstLoad = false;
+        loadMessages(mFirstLoad);
+        mFirstLoad = false;
+    }
+
+    private void loadMessages(boolean forceUpdate) {
+        if (forceUpdate) {
+            mMessagesRepository.refreshMessages();
         }
 
         mMessagesRepository.getMessages(new MessagesDataSource.LoadMessagesCallBack() {
             @Override
             public void onMessagesLoaded(List<Message> messages) {
                 //List<Message> messagesToShow = new ArrayList<Message>();
-                mMessages = new ArrayList<Message>();
+                mMessages = new ArrayList<>();
 
                 for (Message message : messages) {
                     //messagesToShow.add(message);
@@ -102,17 +107,20 @@ public class ChatPresenter implements ChatContract.Presenter {
         mUserThumbnailsRepository.getUserThumbnails(new UserThumbnailsDataSource.LoadUserThumbnailsCallBack() {
             @Override
             public void onUserThumbnailsLoaded(List<UserThumbnail> userThumbnails) {
-                Map<String, UserThumbnail> userThumbnailsToShow = new HashMap<String, UserThumbnail>();
+                //Map<String, UserThumbnail> userThumbnailsToShow = new HashMap<String, UserThumbnail>();
+                mUserThumbnails = new HashMap<>();
 
                 for (UserThumbnail userThumbnail : userThumbnails) {
-                    userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
+                    //userThumbnailsToShow.put(userThumbnail.getUid(), userThumbnail);
+                    mUserThumbnails.put(userThumbnail.getUid(), userThumbnail);
                 }
 
                 if (!mView.isActive()) {
                     return;
                 }
 
-                processUserThumbnails(userThumbnailsToShow);
+                //processUserThumbnails(userThumbnailsToShow);
+                processUserThumbnails(mUserThumbnails);
             }
 
             @Override
@@ -148,6 +156,7 @@ public class ChatPresenter implements ChatContract.Presenter {
         mView.showMatchingFragment();
     }
 
+
     @Override
     public void onBindViewHolder(int position, ChatContract.RecyclerRowView holder) {
         Message message = mMessages.get(position);
@@ -158,7 +167,7 @@ public class ChatPresenter implements ChatContract.Presenter {
             if (mUserThumbnails.get(uid) != null) {
                 holder.setUserThumbnail(mUserThumbnails.get(uid));
             } else {
-                getUserThumbnail(uid, position);
+                //getUserThumbnail(uid, position);
             }
         }
 

@@ -1,5 +1,7 @@
 package com.familyset.randomchatting.data.message.remote;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -26,8 +28,6 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
     private CollectionReference messagesColRef;
     private ListenerRegistration mMessagesListenerRegistration;
 
-    private final static Map<String, Message> MESSAGES_REMOTE_DATA = new LinkedHashMap<>();
-
     public static MessagesRemoteDataSource getInstance(String collectionRef, String documentRef) {
         if (INSTANCE == null) {
             INSTANCE = new MessagesRemoteDataSource(collectionRef, documentRef);
@@ -42,7 +42,7 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
 
     @Override
     public void getMessages(LoadMessagesCallBack callBack) {
-        mMessagesListenerRegistration = messagesColRef.orderBy("timestamp", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mMessagesListenerRegistration = messagesColRef.orderBy("timestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 List<Message> messages = value.toObjects(Message.class);
@@ -76,6 +76,12 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
         if (mMessagesListenerRegistration != null) {
             mMessagesListenerRegistration.remove();
         }
+    }
+
+    @Override
+    public void refreshMessages() {
+        // Not required because the {@link MessagesRepository} handles the logic of refreshing the
+        // tasks from all the available data sources.
     }
 
 }
