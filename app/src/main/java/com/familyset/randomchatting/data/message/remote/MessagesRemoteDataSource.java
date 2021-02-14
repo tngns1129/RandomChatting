@@ -42,7 +42,7 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
 
     @Override
     public void getMessages(LoadMessagesCallBack callBack) {
-        mMessagesListenerRegistration = messagesColRef.orderBy("timestamp", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mMessagesListenerRegistration = messagesColRef.orderBy("timestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 List<Message> messages = value.toObjects(Message.class);
