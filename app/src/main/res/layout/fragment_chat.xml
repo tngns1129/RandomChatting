@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/chat_layout_file_send"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chat_layout_recycler_view">
@@ -57,6 +57,37 @@
             android:layout_width="45dp"
             android:layout_height="match_parent"
             android:text="S" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/chat_layout_file_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_layout_edit_text">
+
+        <Button
+            android:id="@+id/chat_btn_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="갤러리"/>
+
+        <Button
+            android:id="@+id/chat_btn_take_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="사진"/>
+
+        <Button
+            android:id="@+id/chat_btn_take_video"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="동영상"/>
 
     </LinearLayout>
 

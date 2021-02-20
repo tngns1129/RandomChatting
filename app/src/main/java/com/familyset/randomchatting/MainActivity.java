@@ -6,8 +6,10 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.familyset.randomchatting.chat.ChatFragment;
-import com.familyset.randomchatting.chat.ChatPresenter;
+import com.familyset.randomchatting.data.file.FilesRepository;
+import com.familyset.randomchatting.data.file.remote.FilesRemoteDataSource;
+import com.familyset.randomchatting.ui.chat.ChatFragment;
+import com.familyset.randomchatting.ui.chat.ChatPresenter;
 import com.familyset.randomchatting.data.message.MessagesRepository;
 import com.familyset.randomchatting.data.message.remote.MessagesRemoteDataSource;
 import com.familyset.randomchatting.data.randomRoom.RandomRoomsRepository;
@@ -15,14 +17,12 @@ import com.familyset.randomchatting.data.user.UsersRepository;
 import com.familyset.randomchatting.data.user.remote.UsersRemoteDataSource;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
 import com.familyset.randomchatting.data.userThumbnail.remote.UserThumbnailsRemoteDataSource;
-import com.familyset.randomchatting.matching.MatchingFragment;
-import com.familyset.randomchatting.matching.MatchingPresenter;
+import com.familyset.randomchatting.ui.matching.MatchingFragment;
+import com.familyset.randomchatting.ui.matching.MatchingPresenter;
 import com.familyset.randomchatting.util.PreferenceManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,24 +34,30 @@ public class MainActivity extends AppCompatActivity {
     private MatchingPresenter mMatchingPresenter;
 
     private String mUid;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setUID();
-
         mMatchingFragment = new MatchingFragment();
 
         mFragmentManager = getSupportFragmentManager();
 
-        showMatchingFragment();
+        mAuth.signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                setUID();
+
+                showMatchingFragment();
+            }
+        });
     }
 
     public void setUID() {
         if ((mUid = PreferenceManager.getString(getApplicationContext(), "UID")).equals("")) {
-            mUid = UUID.randomUUID().toString();
+            mUid = mAuth.getUid();
             PreferenceManager.setString(getApplicationContext(), "UID", mUid);
         }
 
@@ -62,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
         mChatFragment = new ChatFragment();
         mChatPresenter = new ChatPresenter(mUid, mChatFragment,
                 UserThumbnailsRepository.getInstance(UserThumbnailsRemoteDataSource.getInstance("randomRooms", rid)),
-                MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", rid)));
+                MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", rid)),
+                FilesRepository.getInstance(FilesRemoteDataSource.getInstance(rid)));
+
         mFragmentManager.beginTransaction().replace(R.id.main_frame_layout, mChatFragment).commit();
 
         if (mMatchingFragment.isAdded()) {

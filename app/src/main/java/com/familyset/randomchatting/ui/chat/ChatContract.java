@@ -1,12 +1,10 @@
-package com.familyset.randomchatting.chat;
+package com.familyset.randomchatting.ui.chat;
 
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.Nullable;
 
 import com.familyset.randomchatting.data.message.Message;
+import com.familyset.randomchatting.data.message.MessagesType;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
-
-import java.util.List;
-import java.util.Map;
 
 public interface ChatContract {
     interface View {
@@ -25,10 +23,11 @@ public interface ChatContract {
     interface RecyclerRowView {
         void setUserThumbnail(UserThumbnail userThumbnail);
         void setMsg(String msg);
+        void setImageMsg();
     }
 
     interface Presenter {
-        void saveMessage(String msg);
+        void sendMessage(String msg, MessagesType msgType, @Nullable Message.FileInfo fileInfo);
         void startListening();
         void stopListening();
         void loadMessages();
@@ -37,7 +36,7 @@ public interface ChatContract {
         void rematching();
 
         void onBindViewHolder(int position, ChatContract.RecyclerRowView holder);
-        boolean getItemViewType(int position);
+        MessagesType getItemViewType(int position);
         int getItemCount();
     }
 }

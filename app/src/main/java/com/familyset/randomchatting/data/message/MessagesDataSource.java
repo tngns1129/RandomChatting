@@ -16,7 +16,7 @@ public interface MessagesDataSource {
 
     void getMessages(LoadMessagesCallBack callBack);
     void getMessage(@NonNull String id, @NonNull MessagesDataSource.GetMessagesCallBack callBack);
-    void saveMessage(@NonNull Message message);
+    void sendMessage(@NonNull Message message);
     void stopLoadingMessages();
     void refreshMessages();
 }

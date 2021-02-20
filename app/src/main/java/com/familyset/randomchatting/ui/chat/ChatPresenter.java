@@ -1,19 +1,19 @@
-package com.familyset.randomchatting.chat;
+package com.familyset.randomchatting.ui.chat;
 
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 
+import com.familyset.randomchatting.data.file.FileDataSource;
+import com.familyset.randomchatting.data.file.FilesRepository;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesDataSource;
 import com.familyset.randomchatting.data.message.MessagesRepository;
-import com.familyset.randomchatting.data.user.User;
+import com.familyset.randomchatting.data.message.MessagesType;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsDataSource;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsRepository;
-import com.familyset.randomchatting.matching.MatchingFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,17 +24,22 @@ public class ChatPresenter implements ChatContract.Presenter {
     private ChatContract.View mView;
     private UserThumbnailsRepository mUserThumbnailsRepository;
     private MessagesRepository mMessagesRepository;
+    private FilesRepository mFilesRepository;
 
     private boolean mFirstLoad = true;
     private String mUid;
     private List<Message> mMessages;
     private Map<String, UserThumbnail> mUserThumbnails;
 
-    public ChatPresenter(String uid, @NonNull ChatContract.View view, @NonNull UserThumbnailsRepository userThumbnailsRepository, @NonNull MessagesRepository messagesRepository) {
+    public ChatPresenter(String uid, @NonNull ChatContract.View view
+            , @NonNull UserThumbnailsRepository userThumbnailsRepository
+            , @NonNull MessagesRepository messagesRepository
+            , @NonNull FilesRepository filesRepository) {
         mUid = uid;
         mView = view;
         mUserThumbnailsRepository = userThumbnailsRepository;
         mMessagesRepository = messagesRepository;
+        mFilesRepository = filesRepository;
 
         mMessages = new ArrayList<>();
         mUserThumbnails = new HashMap<>();
@@ -43,9 +48,9 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
-    public void saveMessage(String msg) {
+    public void sendMessage(String msg, MessagesType type, Message.FileInfo fileInfo) {
         if (!msg.equals("")) {
-            createMessage(mUid, msg);
+            createMessage(mUid, msg, type, fileInfo);
 
             mView.clearEditText();
         }
@@ -171,17 +176,30 @@ public class ChatPresenter implements ChatContract.Presenter {
             }
         }
 
-        holder.setMsg(message.getMsg());
+        if (message.getTypeAsEnum() == MessagesType.TEXT) {
+            holder.setMsg(message.getMsg());
+        } else if(message.getTypeAsEnum() == MessagesType.IMAGE) {
+            holder.setImageMsg();
+        }
     }
 
     @Override
-    public boolean getItemViewType(int position) {
+    public MessagesType getItemViewType(int position) {
         Message message = mMessages.get(position);
 
+        if (message.getType() == null) {
+            return MessagesType.O_TEXT;
+        }
+
         if (message.getUid().equals(mUid)) {
-            return true;
+            return MessagesType.valueOf(message.getType());
         } else {
-            return false;
+            switch (MessagesType.valueOf(message.getType())) {
+                case TEXT:
+                default: return MessagesType.O_TEXT;
+                case IMAGE: return MessagesType.O_IMAGE;
+                case VIDEO: return MessagesType.O_VIDEO;
+            }
         }
     }
 
@@ -189,6 +207,8 @@ public class ChatPresenter implements ChatContract.Presenter {
     public int getItemCount() {
         return mMessages.size();
     }
+
+
 
     private void stopLoadingUserThumbnails() {
         mUserThumbnailsRepository.stopLoadingUserThumbnails();
@@ -215,12 +235,31 @@ public class ChatPresenter implements ChatContract.Presenter {
         }
     }
 
-    private void createMessage(String uid, String msg) {
-        Message newMessage = new Message(uid, msg);
+    private void createMessage(String uid, String msg, MessagesType type, Message.FileInfo fileInfo) {
+        Message newMessage = new Message(uid, msg, type, fileInfo);
+
         if (newMessage == null) {
             //mView.showEmptyMessageError();
         } else {
-            mMessagesRepository.saveMessage(newMessage);
+            if (type == MessagesType.TEXT) {
+                mMessagesRepository.sendMessage(newMessage);
+            }
+            else if (type == MessagesType.IMAGE) {
+                Uri uri = Uri.parse(msg);
+
+                mFilesRepository.setFile(uri, new FileDataSource.SetFileCallBack() {
+                    @Override
+                    public void onFileUploaded() {
+                        newMessage.setMsg(uri.getLastPathSegment());
+                        mMessagesRepository.sendMessage(newMessage);
+                    }
+
+                    @Override
+                    public void onDataNotUploaded() {
+
+                    }
+                });
+            }
         }
     }
 }

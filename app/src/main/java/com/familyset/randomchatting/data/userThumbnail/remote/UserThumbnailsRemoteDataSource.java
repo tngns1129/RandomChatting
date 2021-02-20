@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnailsDataSource;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -118,25 +119,33 @@ public class UserThumbnailsRemoteDataSource implements UserThumbnailsDataSource 
     }
 
     private void processUrlToFile(int i, LoadUserThumbnailsCallBack callBack) {
-        if (i == mUserThumbnails.size() - 1) {
+        if (i == mUserThumbnails.size()) {
             callBack.onUserThumbnailsLoaded(mUserThumbnails);
             return;
         }
 
         try {
-            File file = File.createTempFile("images", "jpg");
+            File file = File.createTempFile("image", "jpg");
 
             mUserThumbnailPhotosStorageRef.child(mUserThumbnails.get(i).getUid())
                     .child(mUserThumbnails.get(i).getPhotoUrl()+ ".jpg").getFile(file)
                     .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Log.d("ThumbnailsUTF", file.toString());
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            Log.d("ThumbnailsUTF", file.getPath());
 
-                    mUserThumbnails.get(i).setPhotoUrl(file.getPath());
-                    processUrlToFile(i+1, callBack);
-                }
-            });
+                            mUserThumbnails.get(i).setPhotoUrl(file.getPath());
+                            processUrlToFile(i+1, callBack);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("SDF", e.getMessage());
+                        }
+                    });
+
+            file.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package com.familyset.randomchatting.data.message.remote;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,7 +19,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +72,7 @@ public class MessagesRemoteDataSource implements MessagesDataSource {
     }
 
     @Override
-    public void saveMessage(@NonNull Message message) {
+    public void sendMessage(@NonNull Message message) {
         messagesColRef.document(message.getId()).set(message);
     }
 

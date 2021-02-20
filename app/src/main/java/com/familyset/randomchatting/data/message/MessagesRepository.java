@@ -57,8 +57,8 @@ public class MessagesRepository implements MessagesDataSource {
     }
 
     @Override
-    public void saveMessage(@NonNull Message message) {
-        mMessagesRemoteDataSource.saveMessage(message);
+    public void sendMessage(@NonNull Message message) {
+        mMessagesRemoteDataSource.sendMessage(message);
 
         if (mCachedMessages == null) {
             mCachedMessages = new LinkedHashMap<>();

@@ -23,7 +23,7 @@
                 android:visibility="visible"/>
 
             <TextView
-                android:id="@+id/chat_msg_divider_date"
+                android:id="@+id/chat_divider_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -54,14 +54,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/chat_msg_text_view_read_counter"
+                    android:id="@+id/chat_text_view_read_counter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:text="99" />
 
                 <TextView
-                    android:id="@+id/chat_msg_text_view_timestamp"
+                    android:id="@+id/chat_text_view_timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="00:00" />
@@ -74,10 +74,10 @@
                 android:layout_marginRight="5dp">
 
                 <TextView
-                    android:id="@+id/chat_msg_text_view_msg"
+                    android:id="@+id/chat_text_view_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MSG" />
+                    android:maxWidth="270dp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

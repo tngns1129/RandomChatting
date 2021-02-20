@@ -68,12 +68,11 @@
                     android:layout_height="wrap_content"
                     android:text="USER_NAME" />
 
-                <TextView
-                    android:id="@+id/chat_text_view_msg"
+                <ImageView
+                    android:id="@+id/chat_image_view_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="270dp"
-                    android:text="MSG" />
+                    android:maxWidth="270dp" />
             </LinearLayout>
 
             <LinearLayout

@@ -1,21 +1,18 @@
-package com.familyset.randomchatting.matching;
+package com.familyset.randomchatting.ui.matching;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.familyset.randomchatting.MainActivity;
 import com.familyset.randomchatting.R;
-import com.familyset.randomchatting.data.randomRoom.RandomRoomsRepository;
 
 public class MatchingFragment extends Fragment implements MatchingContractor.View {
     private MatchingContractor.Presenter mPresenter;

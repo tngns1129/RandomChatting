@@ -1,4 +1,4 @@
-package com.familyset.randomchatting.signUp;
+package com.familyset.randomchatting.ui.signUp;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

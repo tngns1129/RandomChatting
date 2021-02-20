@@ -1,4 +1,4 @@
-package com.familyset.randomchatting.matching;
+package com.familyset.randomchatting.ui.matching;
 
 import androidx.annotation.Nullable;
 

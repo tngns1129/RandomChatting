@@ -1,6 +1,4 @@
-package com.familyset.randomchatting.matching;
-
-import android.provider.Settings;
+package com.familyset.randomchatting.ui.matching;
 
 import androidx.annotation.Nullable;
 
@@ -10,7 +8,6 @@ import com.familyset.randomchatting.data.user.User;
 import com.familyset.randomchatting.data.user.UsersDataSource;
 import com.familyset.randomchatting.data.user.UsersRepository;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
-import com.familyset.randomchatting.util.PreferenceManager;
 
 public class MatchingPresenter implements MatchingContractor.Presenter {
     private MatchingContractor.View mView;
