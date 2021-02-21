@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showChatFragment(String rid) {
         mChatFragment = new ChatFragment();
-        mChatPresenter = new ChatPresenter(mUid, mChatFragment,
+        mChatPresenter = new ChatPresenter(mUid, rid, mChatFragment,
                 UserThumbnailsRepository.getInstance(UserThumbnailsRemoteDataSource.getInstance("randomRooms", rid)),
                 MessagesRepository.getInstance(MessagesRemoteDataSource.getInstance("randomRooms", rid)),
                 FilesRepository.getInstance(FilesRemoteDataSource.getInstance(rid)));

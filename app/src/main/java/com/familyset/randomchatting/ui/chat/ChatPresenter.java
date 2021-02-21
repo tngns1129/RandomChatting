@@ -1,5 +1,6 @@
 package com.familyset.randomchatting.ui.chat;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
@@ -28,14 +29,16 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     private boolean mFirstLoad = true;
     private String mUid;
+    private String mRid;
     private List<Message> mMessages;
     private Map<String, UserThumbnail> mUserThumbnails;
 
-    public ChatPresenter(String uid, @NonNull ChatContract.View view
+    public ChatPresenter(String uid, String rid, @NonNull ChatContract.View view
             , @NonNull UserThumbnailsRepository userThumbnailsRepository
             , @NonNull MessagesRepository messagesRepository
             , @NonNull FilesRepository filesRepository) {
         mUid = uid;
+        mRid = rid;
         mView = view;
         mUserThumbnailsRepository = userThumbnailsRepository;
         mMessagesRepository = messagesRepository;
@@ -161,6 +164,18 @@ public class ChatPresenter implements ChatContract.Presenter {
         mView.showMatchingFragment();
     }
 
+    @Override
+    public void openExpandedImage(int position) {
+        Message message = mMessages.get(position);
+        if (message.getTypeAsEnum() == MessagesType.TEXT) {
+            return;
+        }
+
+        String imagePath = mRid;
+        String imageUri = message.getMsg();
+
+        mView.showExpandedImageUi(imagePath, imageUri);
+    }
 
     @Override
     public void onBindViewHolder(int position, ChatContract.RecyclerRowView holder) {

@@ -29,6 +29,7 @@ import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesType;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
+import com.familyset.randomchatting.ui.expandedImage.ExpandedImageActivity;
 import com.familyset.randomchatting.util.MyUtil;
 
 import java.io.File;
@@ -255,6 +256,14 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     }
 
     @Override
+    public void showExpandedImageUi(String imagePath, String imageUri) {
+        Intent intent = new Intent(getContext(), ExpandedImageActivity.class);
+        intent.putExtra(ExpandedImageActivity.EXTRA_IMAGE_PATH, imagePath);
+        intent.putExtra(ExpandedImageActivity.EXTRA_IMAGE_URI, imageUri);
+        startActivity(intent);
+    }
+
+    @Override
     public void showMatchingFragment() {
         ((MainActivity)getActivity()).showMatchingFragment();
     }
@@ -353,7 +362,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
                     msgView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            mPresenter.openExpandedImage(getAdapterPosition());
                         }
                     });
                 }

@@ -17,6 +17,9 @@ public interface ChatContract {
         void showUserThumbnails();
 
         void clearEditText();
+
+        void showExpandedImageUi(String imagePath, String imageUri);
+
         void showMatchingFragment();
     }
 
@@ -34,6 +37,7 @@ public interface ChatContract {
         void getUserThumbnail(String uid, int position);
         void loadUserThumbnails();
         void rematching();
+        void openExpandedImage(int position);
 
         void onBindViewHolder(int position, ChatContract.RecyclerRowView holder);
         MessagesType getItemViewType(int position);
