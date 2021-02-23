@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.familyset.randomchatting.data.file.FilesRepository;
 import com.familyset.randomchatting.data.file.remote.FilesRemoteDataSource;
@@ -43,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);   //캡쳐 금지
         setContentView(R.layout.activity_main);
+
+
 
         mMatchingFragment = new MatchingFragment();
 
