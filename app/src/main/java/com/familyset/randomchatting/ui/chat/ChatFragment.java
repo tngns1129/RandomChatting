@@ -2,15 +2,24 @@ package com.familyset.randomchatting.ui.chat;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,7 +43,7 @@ import com.familyset.randomchatting.util.MyUtil;
 
 import java.io.File;
 
-public class ChatFragment extends Fragment implements ChatContract.View {
+public class ChatFragment extends Fragment implements ChatContract.View, ChatContract.OnBackPressedListener{
 
     private ChatContract.Presenter mPresenter;
     private RecyclerView mRecyclerView;
@@ -54,6 +63,10 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     private static final int TAKE_PICTURE = 1;
     private static final int TAKE_VIDEO = 2;
 
+    private int keyboardHeight = 0;
+    private boolean isKeyboardShowing = false;
+    private InputMethodManager imm;
+
     private ChatAdapter mAdapter;
 
     @Override
@@ -66,6 +79,7 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat,container, false);
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // set up messages view
         mRecyclerView = view.findViewById(R.id.chat_recycler_view);
@@ -84,6 +98,37 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         mTakePictureBtn = view.findViewById(R.id.chat_btn_take_picture);
         mTakeVideoBtn = view.findViewById(R.id.chat_btn_take_video);
 
+        ((MainActivity)getActivity()).setOnBackPressedListener(this);
+
+
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mFileSendLL.getVisibility() == View.VISIBLE && !isKeyboardShowing) {
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    hideFileSend();
+                    Handler mHandler = new Handler();
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            // 시간 지난 후 실행할 코딩
+                            showKeyboard();
+                        }
+                    }, 50);
+                } else if (mFileSendLL.getVisibility() == View.GONE && !isKeyboardShowing) {
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                }
+            }
+        });
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                getKeyboardHeight(view);
+            }
+        });
+
+
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,17 +146,18 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         fileSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mFileSendLL.getVisibility() == View.GONE) {
-                    showFileSend();
-                } else {
-                    hideFileSend();
-                }
+                controlFileSendContainer();
             }
         });
+
+
 
         mGalleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mFileSendLL.getVisibility() == View.VISIBLE) {
+                    mFileSendLL.setVisibility(View.GONE);
+                }
                 showGallery();
             }
         });
@@ -119,6 +165,9 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         mTakePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mFileSendLL.getVisibility() == View.VISIBLE) {
+                    mFileSendLL.setVisibility(View.GONE);
+                }
                 showTakePicture();
             }
         });
@@ -126,6 +175,9 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         mTakeVideoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mFileSendLL.getVisibility() == View.VISIBLE) {
+                    mFileSendLL.setVisibility(View.GONE);
+                }
                 showTakeVideo();
             }
         });
@@ -147,6 +199,57 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         return view;
     }
 
+
+
+
+    private void controlFileSendContainer() {
+        if(mFileSendLL.getVisibility() == View.GONE && !isKeyboardShowing) {
+            showFileSend();
+        }
+
+        else if (mFileSendLL.getVisibility() == View.GONE && isKeyboardShowing) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            Handler mHandler = new Handler();
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    // 시간 지난 후 실행할 코딩
+                    showFileSend();
+                }
+            }, 50);
+            hideKeyboard();
+        }
+
+        else if (mFileSendLL.getVisibility() == View.VISIBLE && !isKeyboardShowing) {
+            //if(mFileSendLL.getHeight() != keyboardHeight){
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                hideFileSend();
+                Handler mHandler = new Handler();
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        // 시간 지난 후 실행할 코딩
+                        showKeyboard();
+                    }
+                }, 50);
+            //}
+            /*else {
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+                Handler mHandler = new Handler();
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        // 시간 지난 후 실행할 코딩
+                        showKeyboard();
+                    }
+                }, 50);
+            }
+
+             */
+        }
+
+        else if (mFileSendLL.getVisibility() == View.VISIBLE && isKeyboardShowing) {
+            hideKeyboard();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -157,6 +260,8 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     public void onPause() {
         super.onPause();
         mPresenter.stopListening();
+        if(mFileSendLL.getVisibility() == View.VISIBLE)
+            mFileSendLL.setVisibility(View.GONE);
     }
 
     @Override
@@ -272,12 +377,92 @@ public class ChatFragment extends Fragment implements ChatContract.View {
         mPresenter = presenter;
     }
 
+    private void getKeyboardHeight(View view) {
+        Rect rectangle = new Rect();
+        view.getWindowVisibleDisplayFrame(rectangle);
+        int screenHeight;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            if(getActivity().getWindow().getDecorView().getRootWindowInsets().getDisplayCutout() == null)
+                screenHeight = displayMetrics.heightPixels; //파이이상 + not 노치
+            else {
+                int statusBarHeight = 0;
+                int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+                if (resourceId > 0) statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+                screenHeight = displayMetrics.heightPixels + statusBarHeight; //파이 이상 + 노치
+            }
+        } else {
+            screenHeight = view.getRootView().getHeight();
+        }
+
+        int tempKeyboardSize = screenHeight - rectangle.bottom;
+
+        if (tempKeyboardSize > screenHeight * 0.1) {
+            keyboardHeight = screenHeight - rectangle.bottom;
+            if (!isKeyboardShowing) {
+                isKeyboardShowing = true;
+            }
+        } else {
+        }
+    }
+
     private void showFileSend() {
+        ViewGroup.LayoutParams params = mFileSendLL.getLayoutParams();
+
+        if(keyboardHeight != 0)
+            params.height = keyboardHeight;
+        mFileSendLL.setLayoutParams(params);
         mFileSendLL.setVisibility(View.VISIBLE);
     }
 
     private void hideFileSend() {
         mFileSendLL.setVisibility(View.GONE);
+    }
+    private void hideKeyboard() {
+            /*getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            Handler mHandler2 = new Handler();
+            mHandler2.postDelayed(new Runnable() {
+                public void run() {
+                    // 시간 지난 후 실행할 코딩
+                    ViewGroup.LayoutParams params = layoutFileSend.getLayoutParams();
+                    params.height = keyboardHeight;
+                    layoutFileSend.setLayoutParams(params);
+                    layoutFileSend.setVisibility(View.VISIBLE);
+                }
+            }, 50);
+
+
+
+            Handler mHandler = new Handler();
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    // 시간 지난 후 실행할 코딩
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                }
+            }, 50);
+
+             */
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        isKeyboardShowing = false;
+    }
+
+    private void showKeyboard() {
+        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        editText.requestFocus();
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+        isKeyboardShowing = true;
+            /*Handler mHandler = new Handler();
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    // 시간 지난 후 실행할 코딩
+                    layoutFileSend.setVisibility(View.GONE);
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                }
+            }, 150);
+
+             */
+
     }
 
     private void showGallery() {
@@ -297,6 +482,16 @@ public class ChatFragment extends Fragment implements ChatContract.View {
     ChatItemListener mItemListener = new ChatItemListener() {
 
     };
+
+    @Override
+    public void onBackPressed() {
+        if(mFileSendLL.getVisibility()==View.VISIBLE){
+            mFileSendLL.setVisibility(View.GONE);
+        }
+        else{
+            getActivity().finish();
+        }
+    }
 
     private static class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
         private ChatContract.Presenter mPresenter;

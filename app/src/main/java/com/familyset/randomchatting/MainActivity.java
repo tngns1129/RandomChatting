@@ -1,6 +1,7 @@
 package com.familyset.randomchatting;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 
 import com.familyset.randomchatting.data.file.FilesRepository;
 import com.familyset.randomchatting.data.file.remote.FilesRemoteDataSource;
+import com.familyset.randomchatting.ui.chat.ChatContract;
 import com.familyset.randomchatting.ui.chat.ChatFragment;
 import com.familyset.randomchatting.ui.chat.ChatPresenter;
 import com.familyset.randomchatting.data.message.MessagesRepository;
@@ -25,6 +27,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ChatContract.OnBackPressedListener listener;
 
     private FragmentManager mFragmentManager;
     private ChatFragment mChatFragment;
@@ -55,12 +59,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+            if (listener != null) {
+                listener.onBackPressed();
+            } else {
+                super.onBackPressed();
+            }
+
+    }
+
     public void setUID() {
-        if ((mUid = PreferenceManager.getString(getApplicationContext(), "UID")).equals("")) {
+        /*if ((mUid = PreferenceManager.getString(getApplicationContext(), "UID")).equals("")) {
             mUid = mAuth.getUid();
             PreferenceManager.setString(getApplicationContext(), "UID", mUid);
         }
 
+         */
+
+        mUid = "d3d29ed6-6397-4219-99de-ce8653ef9bde";
         Log.d("UID", mUid);
     }
 
@@ -90,4 +107,7 @@ public class MainActivity extends AppCompatActivity {
         mFragmentManager.beginTransaction().show(mMatchingFragment).commit();
     }
 
+    public void setOnBackPressedListener(ChatContract.OnBackPressedListener listener) {
+        this.listener = listener;
+    }
 }

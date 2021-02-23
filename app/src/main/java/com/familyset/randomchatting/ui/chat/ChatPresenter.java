@@ -202,10 +202,6 @@ public class ChatPresenter implements ChatContract.Presenter {
     public MessagesType getItemViewType(int position) {
         Message message = mMessages.get(position);
 
-        if (message.getType() == null) {
-            return MessagesType.O_TEXT;
-        }
-
         if (message.getUid().equals(mUid)) {
             return MessagesType.valueOf(message.getType());
         } else {

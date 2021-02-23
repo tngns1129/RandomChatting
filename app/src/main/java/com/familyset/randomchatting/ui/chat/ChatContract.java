@@ -7,6 +7,11 @@ import com.familyset.randomchatting.data.message.MessagesType;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 
 public interface ChatContract {
+
+    interface OnBackPressedListener{
+        void onBackPressed();
+    }
+
     interface View {
         void setPresenter(Presenter presenter);
 
