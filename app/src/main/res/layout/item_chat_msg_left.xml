@@ -1,99 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_constraint_layout_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/chat_divider_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:text="1999-01-01"
+        android:textSize="10dp"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/chat_image_view_user_photo"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_divider_date"
+        app:layout_goneMarginTop="3dp" />
 
-            <View
-                android:layout_width="100dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@android:color/darker_gray"
-                android:visibility="visible"/>
+    <TextView
+        android:id="@+id/chat_text_view_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="5dp"
+        android:text="USER_NAME"
+        app:layout_constraintLeft_toRightOf="@id/chat_image_view_user_photo"
+        app:layout_constraintTop_toBottomOf="@id/chat_divider_date"
+        app:layout_goneMarginTop="3dp" />
 
-            <TextView
-                android:id="@+id/chat_divider_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="1999-01-01"
-                android:textAlignment="center" />
+    <TextView
+        android:id="@+id/chat_text_view_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:maxWidth="250dp"
+        android:text="MSG"
+        app:layout_constraintLeft_toRightOf="@id/chat_image_view_user_photo"
+        app:layout_constraintTop_toBottomOf="@id/chat_text_view_user_name"
+        app:layout_goneMarginLeft="40dp"
+        app:layout_goneMarginTop="3dp" />
 
-            <View
-                android:layout_width="100dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@android:color/darker_gray"
-                android:visibility="visible"/>
-        </LinearLayout>
+    <TextView
+        android:id="@+id/chat_text_view_read_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:text="99"
+        android:textSize="10dp"
+        app:layout_constraintLeft_toRightOf="@id/chat_text_view_msg"
+        app:layout_constraintTop_toBottomOf="@+id/chat_text_view_user_name"
+        app:layout_constraintBottom_toTopOf="@id/chat_text_view_timestamp"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="5dp">
+    <TextView
+        android:id="@+id/chat_text_view_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="1dp"
+        android:text="00:00"
+        android:textSize="10dp"
+        app:layout_constraintLeft_toRightOf="@id/chat_text_view_msg"
+        app:layout_constraintTop_toBottomOf="@id/chat_text_view_read_counter"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/chat_image_view_user_photo"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="3dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/chat_text_view_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="USER_NAME" />
-
-                <TextView
-                    android:id="@+id/chat_text_view_msg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxWidth="270dp"
-                    android:text="MSG" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/chat_text_view_read_counter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="99" />
-
-                <TextView
-                    android:id="@+id/chat_text_view_timestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="00:00" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

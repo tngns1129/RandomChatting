@@ -33,13 +33,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.familyset.randomchatting.MainActivity;
+import com.familyset.randomchatting.ui.main.MainActivity;
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesType;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 import com.familyset.randomchatting.ui.expandedImage.ExpandedImageActivity;
-import com.familyset.randomchatting.util.MyUtil;
+import com.familyset.randomchatting.util.DiskIOUtil;
 
 import java.io.File;
 
@@ -297,7 +297,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
         if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
             File file = new File(uri.getPath());
             fileInfo.setFileName(file.getName());
-            fileInfo.setFileSize(MyUtil.size2String(file.length()));
+            fileInfo.setFileSize(DiskIOUtil.size2String(file.length()));
         }
         // Content Scheme.
         else if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
@@ -308,7 +308,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
                 int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
                 fileInfo.setFileName(returnCursor.getString(nameIndex));
-                fileInfo.setFileSize(MyUtil.size2String(returnCursor.getLong(sizeIndex)));
+                fileInfo.setFileSize(DiskIOUtil.size2String(returnCursor.getLong(sizeIndex)));
                 returnCursor.close();
             }
         }

@@ -27,7 +27,7 @@ public class UsersRepository implements UsersDataSource {
     }
 
     @Override
-    public void setUser(User user) {
-        mUsersRemoteDataSource.setUser(user);
+    public void setUser(User user, SetUsersCallBack callBack) {
+        mUsersRemoteDataSource.setUser(user, callBack);
     }
 }

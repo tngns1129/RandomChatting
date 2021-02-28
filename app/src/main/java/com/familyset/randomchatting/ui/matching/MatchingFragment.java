@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.familyset.randomchatting.MainActivity;
+import com.familyset.randomchatting.ui.main.MainActivity;
 import com.familyset.randomchatting.R;
 
 public class MatchingFragment extends Fragment implements MatchingContractor.View {
