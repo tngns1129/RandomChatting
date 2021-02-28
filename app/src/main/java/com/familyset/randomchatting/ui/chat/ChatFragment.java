@@ -206,11 +206,12 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
 
         else if (mFileSendLL.getVisibility() == View.GONE && isKeyboardShowing) {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            showFileSend();
             Handler mHandler = new Handler();
             mHandler.postDelayed(new Runnable() {
                 public void run() {
                     // 시간 지난 후 실행할 코딩
-                    showFileSend();
+                    //showFileSend();
                 }
             }, 50);
             hideKeyboard();
@@ -218,15 +219,16 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
 
         else if (mFileSendLL.getVisibility() == View.VISIBLE && !isKeyboardShowing) {
             //if(mFileSendLL.getHeight() != keyboardHeight){
-                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                hideFileSend();
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+                showKeyboard();
                 Handler mHandler = new Handler();
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
                         // 시간 지난 후 실행할 코딩
-                        showKeyboard();
+                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                        hideFileSend();
                     }
-                }, 50);
+                }, 150);
             //}
             /*else {
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
