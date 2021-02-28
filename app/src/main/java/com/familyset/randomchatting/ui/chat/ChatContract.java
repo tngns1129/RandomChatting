@@ -26,6 +26,8 @@ public interface ChatContract {
         void showExpandedImageUi(String imagePath, String imageUri);
 
         void showMatchingFragment();
+
+        void showOnBackPressed();
     }
 
     interface RecyclerRowView {
@@ -47,5 +49,7 @@ public interface ChatContract {
         void onBindViewHolder(int position, ChatContract.RecyclerRowView holder);
         MessagesType getItemViewType(int position);
         int getItemCount();
+
+        void onBackPressed();
     }
 }

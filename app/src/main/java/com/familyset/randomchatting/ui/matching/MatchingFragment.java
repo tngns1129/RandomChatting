@@ -107,6 +107,11 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
         }
     }
 
+    @Override
+    public void showOnBackPressed() {
+        // TODO if matching select possible
+    }
+
     // 채팅 프래그먼트로 전환, Room 정보를 인자로 주는 게 나아보임
     @Override
     public void showChatFragment(String rid) {
@@ -141,5 +146,10 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
     @Override
     public void setPresenter(MatchingContractor.Presenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 }

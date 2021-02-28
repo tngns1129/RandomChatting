@@ -2,17 +2,20 @@ package com.familyset.randomchatting.ui.main;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.file.FilesRepository;
 import com.familyset.randomchatting.data.file.remote.FilesRemoteDataSource;
 import com.familyset.randomchatting.data.user.User;
+import com.familyset.randomchatting.ui.chat.ChatContract;
 import com.familyset.randomchatting.ui.chat.ChatFragment;
 import com.familyset.randomchatting.ui.chat.ChatPresenter;
 import com.familyset.randomchatting.data.message.MessagesRepository;
@@ -31,7 +34,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-
     private ChatFragment mChatFragment;
     private MatchingFragment mMatchingFragment;
 
@@ -45,11 +47,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);   //캡쳐 금지
         setContentView(R.layout.activity_main);
 
         mUser = getIntent().getParcelableExtra(USER);
 
         showMatchingFragment();
+    }
+
+    @Override
+    public void onBackPressed() {
+            if (mMatchingFragment.isActive() && mMatchingPresenter != null) {
+                mMatchingPresenter.onBackPressed();
+            } else if (mChatFragment.isActive() && mChatPresenter != null) {
+                mChatPresenter.onBackPressed();
+            } else {
+                super.onBackPressed();
+            }
     }
 
     public void showChatFragment(String rid) {

@@ -98,9 +98,6 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
         mTakePictureBtn = view.findViewById(R.id.chat_btn_take_picture);
         mTakeVideoBtn = view.findViewById(R.id.chat_btn_take_video);
 
-        ((MainActivity)getActivity()).setOnBackPressedListener(this);
-
-
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -371,6 +368,16 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
     @Override
     public void showMatchingFragment() {
         ((MainActivity)getActivity()).showMatchingFragment();
+    }
+
+    @Override
+    public void showOnBackPressed() {
+        if(mFileSendLL.getVisibility()==View.VISIBLE){
+            mFileSendLL.setVisibility(View.GONE);
+        }
+        else{
+            getActivity().finish();
+        }
     }
 
     public void setPresenter(@NonNull ChatContract.Presenter presenter) {

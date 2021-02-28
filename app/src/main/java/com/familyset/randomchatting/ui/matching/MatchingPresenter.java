@@ -70,6 +70,11 @@ public class MatchingPresenter implements MatchingContractor.Presenter {
     }
 
     @Override
+    public void onBackPressed() {
+        mView.showOnBackPressed();
+    }
+
+    @Override
     public void startMatch(@Nullable Integer sex) {
         mView.showSearching();
         mRandomRoomsRepository.searchEmptyRoom(mUserThumbnail, new RandomRoomsDataSource.SearchCallBack() {
@@ -118,5 +123,10 @@ public class MatchingPresenter implements MatchingContractor.Presenter {
     @Override
     public void setMatchState(int matchState) {
         mMatchState = matchState;
+    }
+
+    @Override
+    public void start() {
+
     }
 }
