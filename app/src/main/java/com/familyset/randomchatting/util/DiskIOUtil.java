@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class MyUtil {
-    private MyUtil() {}
+public class DiskIOUtil {
+    private DiskIOUtil() {}
 
     public static String size2String(Long fileSize) {
         Integer unit = 1024;

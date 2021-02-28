@@ -42,7 +42,12 @@ public class UsersRemoteDataSource implements UsersDataSource {
     }
 
     @Override
-    public void setUser(User user) {
-        usersColRef.document(user.getUid()).set(user);
+    public void setUser(User user, SetUsersCallBack callBack) {
+        usersColRef.document(user.getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callBack.onUserUpLoaded();
+            }
+        });
     }
 }

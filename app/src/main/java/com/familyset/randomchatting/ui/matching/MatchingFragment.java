@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.familyset.randomchatting.MainActivity;
+import com.familyset.randomchatting.ui.main.MainActivity;
 import com.familyset.randomchatting.R;
 
 public class MatchingFragment extends Fragment implements MatchingContractor.View {
@@ -107,6 +107,11 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
         }
     }
 
+    @Override
+    public void showOnBackPressed() {
+        // TODO if matching select possible
+    }
+
     // 채팅 프래그먼트로 전환, Room 정보를 인자로 주는 게 나아보임
     @Override
     public void showChatFragment(String rid) {
@@ -141,5 +146,10 @@ public class MatchingFragment extends Fragment implements MatchingContractor.Vie
     @Override
     public void setPresenter(MatchingContractor.Presenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 }

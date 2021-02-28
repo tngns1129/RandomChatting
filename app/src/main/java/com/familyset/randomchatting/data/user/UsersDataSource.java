@@ -12,6 +12,11 @@ public interface UsersDataSource {
         void onDataNotAvailable();
     }
 
+    interface SetUsersCallBack {
+        void onUserUpLoaded();
+        void onUserNotUpLoaded();
+    }
+
     void getUser(String uid, GetUsersCallBack callBack);
-    void setUser(User user);
+    void setUser(User user, SetUsersCallBack callBack);
 }

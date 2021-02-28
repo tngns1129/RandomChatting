@@ -219,6 +219,10 @@ public class ChatPresenter implements ChatContract.Presenter {
         return mMessages.size();
     }
 
+    @Override
+    public void onBackPressed() {
+        mView.showOnBackPressed();
+    }
 
 
     private void stopLoadingUserThumbnails() {
