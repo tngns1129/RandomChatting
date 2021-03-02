@@ -3,6 +3,7 @@ package com.familyset.randomchatting.ui.chat;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -178,6 +179,11 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
+    public void reportUser() {
+        Log.d("reportUser", mUid);
+    }
+
+    @Override
     public void onBindViewHolder(int position, ChatContract.RecyclerRowView holder) {
         Message message = mMessages.get(position);
 
@@ -195,6 +201,18 @@ public class ChatPresenter implements ChatContract.Presenter {
             holder.setMsg(message.getMsg());
         } else if(message.getTypeAsEnum() == MessagesType.IMAGE) {
             holder.setImageMsg();
+        }
+
+        if (position == mMessages.size()) {
+            holder.setTimeStamp(message.getRealTimestamp());
+        } else {
+            if ((position + 1) < mMessages.size() &&
+                    message.getRealTimestamp().equals(mMessages.get(position + 1).getRealTimestamp())) {
+                holder.setTimeStamp("");
+
+            } else {
+                holder.setTimeStamp(message.getRealTimestamp());
+            }
         }
     }
 

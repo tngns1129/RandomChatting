@@ -2,6 +2,7 @@ package com.familyset.randomchatting.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +44,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showMainUI() {
+        Log.d("DSFDS", FirebaseAuth.getInstance().getUid());
+
         UsersRepository.getInstance(UsersRemoteDataSource.getInstance())
                 .getUser(FirebaseAuth.getInstance().getUid(), new UsersDataSource.GetUsersCallBack() {
                     @Override

@@ -15,6 +15,9 @@ import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -25,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +46,8 @@ import com.familyset.randomchatting.ui.expandedImage.ExpandedImageActivity;
 import com.familyset.randomchatting.util.DiskIOUtil;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ChatFragment extends Fragment implements ChatContract.View, ChatContract.OnBackPressedListener{
 
@@ -81,6 +87,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
         View view = inflater.inflate(R.layout.fragment_chat,container, false);
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
+
         // set up messages view
         mRecyclerView = view.findViewById(R.id.chat_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(getContext());
@@ -98,6 +105,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
         mTakePictureBtn = view.findViewById(R.id.chat_btn_take_picture);
         mTakeVideoBtn = view.findViewById(R.id.chat_btn_take_video);
 
+        setHasOptionsMenu(true);
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,9 +204,6 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
         return view;
     }
 
-
-
-
     private void controlFileSendContainer() {
         if(mFileSendLL.getVisibility() == View.GONE && !isKeyboardShowing) {
             showFileSend();
@@ -253,6 +258,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
     public void onResume() {
         super.onResume();
         mPresenter.startListening();
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
@@ -272,9 +278,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
 
         if (requestCode == GALLERY) {
             Uri uri = data.getData();
-
             Message.FileInfo fileInfo = getFileInfoFromUri(uri);
-
             mPresenter.sendMessage(uri.toString(), MessagesType.IMAGE, fileInfo);
         }
 
@@ -321,16 +325,33 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
     }
 
     @Override
+    public void showMessage(int position) {
+        //mAdapter.notifyItemChanged(position);
+        mAdapter.notifyDataSetChanged();
+        if (position == mLinearLayoutManager.findLastCompletelyVisibleItemPosition() - 1) {
+            mRecyclerView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                    //mRecyclerView.scrollBy(0, editText.getHeight());
+                }
+            }, 50);
+        }
+    }
+
+    @Override
     public void showMessages() {
         mAdapter.notifyDataSetChanged();
 
-        mRecyclerView.postDelayed(new Runnable() {
+        /*if (mLinearLayoutManager.findLastCompletelyVisibleItemPosition() == ) {
+            mRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
-                mRecyclerView.scrollBy(0, editText.getHeight());
+                //mRecyclerView.scrollBy(0, editText.getHeight());
             }
-        }, 100);
+            }, 50);
+        }*/
     }
 
     @Override
@@ -601,9 +622,47 @@ public class ChatFragment extends Fragment implements ChatContract.View, ChatCon
                 if (msgView == null) return;
                 msgView.setText(R.string.chat_image_msg);
             }
+
+            @Override
+            public void setTimeStamp(String realTimestamp) {
+                //if (realTimestamp.equals("")){
+                //   timestampView.setVisibility(View.INVISIBLE);
+                //} else {
+                //}
+                timestampView.setText(realTimestamp);
+            }
+
+
         }
     }
 
     public interface ChatItemListener {
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.optionmenu, menu);
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.itemBlue:
+                mPresenter.reportUser();
+                break;
+            case R.id.itemGreen:
+                break;
+            case R.id.itemRed:
+                Toast.makeText(getContext(),"후원좀 해주세요....",Toast.LENGTH_SHORT).show();
+                break;
+            case android.R.id.home:
+                //select back button
+                getActivity().finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

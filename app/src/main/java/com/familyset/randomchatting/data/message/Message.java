@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +92,12 @@ public class Message {
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    @Exclude
+    public String getRealTimestamp() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(timestamp);
     }
 
     public void setTimestamp(Date timestamp) {

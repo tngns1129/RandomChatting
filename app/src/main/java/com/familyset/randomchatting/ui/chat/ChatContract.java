@@ -6,6 +6,8 @@ import com.familyset.randomchatting.data.message.Message;
 import com.familyset.randomchatting.data.message.MessagesType;
 import com.familyset.randomchatting.data.userThumbnail.UserThumbnail;
 
+import java.util.Date;
+
 public interface ChatContract {
 
     interface OnBackPressedListener{
@@ -17,6 +19,7 @@ public interface ChatContract {
 
         boolean isActive();
 
+        void showMessage(int position);
         void showMessages();
         void showUserThumbnail(int position);
         void showUserThumbnails();
@@ -34,6 +37,8 @@ public interface ChatContract {
         void setUserThumbnail(UserThumbnail userThumbnail);
         void setMsg(String msg);
         void setImageMsg();
+
+        void setTimeStamp(String realTimestamp);
     }
 
     interface Presenter {
@@ -45,6 +50,7 @@ public interface ChatContract {
         void loadUserThumbnails();
         void rematching();
         void openExpandedImage(int position);
+        void reportUser();
 
         void onBindViewHolder(int position, ChatContract.RecyclerRowView holder);
         MessagesType getItemViewType(int position);

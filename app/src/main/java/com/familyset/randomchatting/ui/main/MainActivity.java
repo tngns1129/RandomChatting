@@ -1,7 +1,9 @@
 package com.familyset.randomchatting.ui.main;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 
@@ -10,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.familyset.randomchatting.R;
 import com.familyset.randomchatting.data.file.FilesRepository;
@@ -49,8 +52,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);   //캡쳐 금지
         setContentView(R.layout.activity_main);
-
         mUser = getIntent().getParcelableExtra(USER);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         showMatchingFragment();
     }
@@ -83,13 +92,11 @@ public class MainActivity extends AppCompatActivity {
     public void showMatchingFragment() {
         if (mMatchingFragment == null || !mMatchingFragment.isAdded()) {
             mMatchingFragment = new MatchingFragment();
-
             mMatchingPresenter = new MatchingPresenter(mUser.getUid(), mMatchingFragment,
                     new RandomRoomsRepository(),
                     UsersRepository.getInstance(UsersRemoteDataSource.getInstance()));
             getSupportFragmentManager().beginTransaction().add(R.id.main_frame_layout, mMatchingFragment).commit();
         }
-
         //mMatchingFragment.showSelect();
         getSupportFragmentManager().beginTransaction().show(mMatchingFragment).commit();
     }
