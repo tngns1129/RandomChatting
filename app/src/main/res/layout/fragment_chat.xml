@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/chat_layout_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintBottom_toTopOf="@id/chat_layout_edit_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/chat_layout_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/chat_layout_file_send"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_layout_recycler_view">
+
+        <Button
+            android:id="@+id/chat_btn_rematch"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:text="R" />
+
+        <Button
+            android:id="@+id/chat_btn_file_send"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:text="F" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/chat_edit_text_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/chat_btn_send"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:text="S" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/chat_layout_file_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_layout_edit_text">
+
+        <Button
+            android:id="@+id/chat_btn_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="갤러리"/>
+
+        <Button
+            android:id="@+id/chat_btn_take_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="사진"/>
+
+        <Button
+            android:id="@+id/chat_btn_take_video"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="동영상"/>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
